@@ -46,14 +46,14 @@ const project = {
         {
             name: "category",
             title: "Category",
-            type: "array",
-            of: [{ type: "string" }],
+            type: "string",
             options: {
                 list: [
                     { title: "brand & campaign system", value: "brand-campaign-system" },
                     { title: "print & editorial design", value: "print-editorial-design" },
                     { title: "digital design", value: "digital-design" },
                 ],
+                layout: "radio",
             },
         },
         {

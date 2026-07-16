@@ -1,9 +1,11 @@
-import Image from "next/image";
+import LandingPage from "@/components/landing-page";
+import { LANDING_PAGE_PROJECTS_QUERY } from "@/sanity/lib/queries";
+import { sanityFetch } from "@/sanity/lib/live";
 
-export default function Home() {
-  return (
-    <div>
-      <h1>Hello World</h1>
-    </div>
-  );
+export default async function Home() {
+  const { data: projects = [] } = await sanityFetch({
+    query: LANDING_PAGE_PROJECTS_QUERY,
+  });
+
+  return <LandingPage projects={projects} />;
 }

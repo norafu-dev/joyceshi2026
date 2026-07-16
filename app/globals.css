@@ -7,9 +7,12 @@
   --color-purple: #6400ff;
 }
 
-
+:root {
+  --site-nav-height: 38px;
+}
 
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-untitled-serif);
@@ -18,10 +21,114 @@ body {
   letter-spacing: -0.002em;
 }
 
-@layer components {
-  .container {
-    display: grid;
-    grid-template-columns: repeat(24, minmax(0, 1fr));
-    column-gap: 4px;
-  }
+body>nav {
+  position: relative;
+  z-index: 20;
+}
+
+body>nav,
+body>nav a,
+body>nav span {
+  transition:
+    color 180ms ease,
+    opacity 220ms ease;
+}
+
+body:has(.landing-page) {
+  background: #000000;
+}
+
+body:has(.landing-page)>nav {
+  color: #ffffff;
+}
+
+body:has(.landing-page)>nav .text-gray {
+  color: #FFFFFF66;
+}
+
+body>nav.nav-about-colors {
+  color: #000000;
+}
+
+body>nav.nav-about-colors .text-gray {
+  color: var(--color-gray);
+}
+
+.nav-plus {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  line-height: 1;
+  vertical-align: -3px;
+  opacity: 1;
+  position: relative;
+  transition:
+    color 180ms ease,
+    opacity 220ms ease-out;
+}
+
+.nav-plus::before,
+.nav-plus::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 15px;
+  height: 1px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.nav-plus::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.nav-plus.nav-plus-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-plus.nav-plus-disabled {
+  pointer-events: none;
+}
+
+body:has(.about-page) {
+  overflow: hidden;
+}
+
+.container {
+  display: grid;
+  width: 100%;
+  max-width: none;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  column-gap: 4px;
+}
+
+.about-page.container {
+  width: auto;
+}
+
+.about-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 - 10px);
+  width: 0;
+  border-left: 1px solid #000000;
+  pointer-events: none;
+}
+
+.about-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.about-scroll::-webkit-scrollbar {
+  display: none;
 }
