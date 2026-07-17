@@ -24,6 +24,26 @@ export const ABOUT_PAGE_QUERY = defineQuery(`
   }
 `);
 
+export const ARCHIVE_PAGE_QUERY = defineQuery(`
+  *[_type == "archive"][0] {
+    _id,
+    title,
+    items[] {
+      _key,
+      image {
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions,
+            lqip
+          }
+        }
+      }
+    }
+  }
+`);
+
 export const PROJECT_CATEGORIES = [
   {
     title: "brand & campaign system",

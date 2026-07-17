@@ -11,8 +11,16 @@ export const structure = (S) =>
             .documentId('about')
             .title('About')
         ),
+      S.listItem()
+        .title('Archive')
+        .child(
+          S.document()
+            .schemaType('archive')
+            .documentId('archive')
+            .title('Archive')
+        ),
       S.divider(),
       ...S.documentTypeListItems().filter(
-        (listItem) => listItem.getId() !== 'about'
+        (listItem) => !['about', 'archive'].includes(listItem.getId())
       ),
     ])

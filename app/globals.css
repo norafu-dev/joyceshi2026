@@ -34,15 +34,18 @@ body>nav span {
     opacity 220ms ease;
 }
 
-body:has(.landing-page) {
+body:has(.landing-page),
+body:has(.archive-page) {
   background: #000000;
 }
 
-body:has(.landing-page)>nav {
+body:has(.landing-page)>nav,
+body:has(.archive-page)>nav {
   color: #ffffff;
 }
 
-body:has(.landing-page)>nav .text-gray {
+body:has(.landing-page)>nav .text-gray,
+body:has(.archive-page)>nav .text-gray {
   color: #FFFFFF66;
 }
 
