@@ -33,7 +33,17 @@ const Nav = ({ about }) => {
     const [aboutColor, setAboutColor] = useState(false);
     const [plusHidden, setPlusHidden] = useState(false);
     const navRef = useRef(null);
+    const navActiveTimerRef = useRef(null);
     const navColorTimerRef = useRef(null);
+
+    const clearNavActiveTimer = useCallback(() => {
+        if (!navActiveTimerRef.current) {
+            return;
+        }
+
+        window.clearTimeout(navActiveTimerRef.current);
+        navActiveTimerRef.current = null;
+    }, []);
 
     const clearNavColorTimer = useCallback(() => {
         if (!navColorTimerRef.current) {
@@ -45,23 +55,29 @@ const Nav = ({ about }) => {
     }, []);
 
     const handleOpenAbout = useCallback(() => {
+        clearNavActiveTimer();
         clearNavColorTimer();
         setPlusHidden(true);
         setAboutNavActive(true);
         setAboutColor(pathname === "/");
         setAboutVisible(true);
         setAboutOpen(true);
-    }, [clearNavColorTimer, pathname]);
+    }, [clearNavActiveTimer, clearNavColorTimer, pathname]);
 
     const handleCloseAbout = useCallback(() => {
         if (!aboutVisible && !aboutOpen && !aboutNavActive && !aboutColor && !plusHidden) {
             return;
         }
 
+        clearNavActiveTimer();
         clearNavColorTimer();
         setPlusHidden(false);
-        setAboutNavActive(false);
         setAboutOpen(false);
+
+        navActiveTimerRef.current = window.setTimeout(() => {
+            setAboutNavActive(false);
+            navActiveTimerRef.current = null;
+        }, NAV_COLOR_CLOSE_DELAY);
 
         if (aboutColor) {
             navColorTimerRef.current = window.setTimeout(() => {
@@ -72,19 +88,23 @@ const Nav = ({ about }) => {
         }
 
         setAboutColor(false);
-    }, [aboutColor, aboutNavActive, aboutOpen, aboutVisible, clearNavColorTimer, plusHidden]);
+    }, [aboutColor, aboutNavActive, aboutOpen, aboutVisible, clearNavActiveTimer, clearNavColorTimer, plusHidden]);
 
     const handleAboutExited = useCallback(() => {
+        clearNavActiveTimer();
         clearNavColorTimer();
         setAboutVisible(false);
         setAboutNavActive(false);
         setAboutColor(false);
         setPlusHidden(false);
-    }, [clearNavColorTimer]);
+    }, [clearNavActiveTimer, clearNavColorTimer]);
 
     useEffect(() => {
-        return clearNavColorTimer;
-    }, [clearNavColorTimer]);
+        return () => {
+            clearNavActiveTimer();
+            clearNavColorTimer();
+        };
+    }, [clearNavActiveTimer, clearNavColorTimer]);
 
     useEffect(() => {
         const nav = navRef.current;
@@ -118,14 +138,14 @@ const Nav = ({ about }) => {
         };
     }, [pathname]);
 
-    const handleJoyceClick = useCallback((event) => {
-        if (!aboutVisible) {
+    const handleJoyceClick = useCallback(() => {
+        if (aboutVisible || aboutOpen || aboutNavActive) {
+            handleCloseAbout();
             return;
         }
 
-        event.preventDefault();
-        handleCloseAbout();
-    }, [aboutVisible, handleCloseAbout]);
+        handleOpenAbout();
+    }, [aboutNavActive, aboutOpen, aboutVisible, handleCloseAbout, handleOpenAbout]);
 
     if (pathname === "/studio" || pathname.startsWith("/studio/")) {
         return null;
@@ -142,9 +162,15 @@ const Nav = ({ about }) => {
                 ref={navRef}
             >
                 <div className="col-span-12">
-                    <Link className={usesAboutColors ? "text-purple" : ""} href="/" onClick={handleJoyceClick}>Joyce Shi </Link>
+                    <button
+                        className={`cursor-pointer border-0 bg-transparent p-0 text-left text-inherit [font:inherit] ${usesAboutColors ? "text-purple" : ""}`}
+                        onClick={handleJoyceClick}
+                        type="button"
+                    >
+                        Joyce Shi{" "}
+                    </button>
                     <span className="text-gray">
-                        is an award-winning design director & independent publisher based in
+                        {" "}is an award-winning design director & independent publisher based in
                         New York working across{" "}
                     </span>
 

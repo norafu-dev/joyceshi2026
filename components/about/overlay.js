@@ -104,15 +104,15 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
             ) : null}
           </div>
 
-          <nav className="mt-auto flex gap-x-32">
+          <nav className="mt-auto grid grid-cols-12 gap-x-1">
             <button
-              className="cursor-pointer border-0 bg-transparent p-0 text-black underline [font:inherit]"
+              className="cursor-pointer justify-self-start border-0 bg-transparent p-0 text-black underline [font:inherit]"
               onClick={onClose}
               type="button"
             >
               Return
             </button>
-            <Link className="text-black underline" href="/archive" onClick={onClose}>
+            <Link className="col-start-4 text-black underline" href="/archive" onClick={onClose}>
               Archive
             </Link>
           </nav>
