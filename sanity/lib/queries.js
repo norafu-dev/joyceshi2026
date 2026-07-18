@@ -141,6 +141,9 @@ export const PROJECTS_BY_CATEGORY_QUERY = defineQuery(`
     categoryPageOrder,
     categoryPageCover {
       image {
+        alt,
+        crop,
+        hotspot,
         asset->{
           _id,
           url,
@@ -151,6 +154,7 @@ export const PROJECTS_BY_CATEGORY_QUERY = defineQuery(`
         }
       },
       video {
+        aspectRatio,
         file {
           asset->{
             _id,
@@ -159,6 +163,8 @@ export const PROJECTS_BY_CATEGORY_QUERY = defineQuery(`
           }
         },
         thumbnail {
+          crop,
+          hotspot,
           asset->{
             _id,
             url,

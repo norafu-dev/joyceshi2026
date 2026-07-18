@@ -71,6 +71,9 @@ const project = {
                     name: "image",
                     title: "Image",
                     type: "image",
+                    options: {
+                        hotspot: true,
+                    },
                 },
                 {
                     name: "video",
@@ -89,6 +92,24 @@ const project = {
                             name: "thumbnail",
                             title: "Thumbnail",
                             type: "image",
+                            options: {
+                                hotspot: true,
+                            },
+                        },
+                        {
+                            name: "aspectRatio",
+                            title: "Aspect Ratio",
+                            type: "string",
+                            description: "Controls the displayed height while the cover width stays fixed.",
+                            options: {
+                                list: [
+                                    { title: "16:9", value: "16:9" },
+                                    { title: "4:3", value: "4:3" },
+                                    { title: "1:1", value: "1:1" },
+                                ],
+                                layout: "radio",
+                            },
+                            initialValue: "16:9",
                         },
                     ],
                 },

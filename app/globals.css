@@ -13,7 +13,7 @@
 
 body {
   margin: 0;
-  background: var(--background);
+  background: #ffffff;
   color: var(--foreground);
   font-family: var(--font-untitled-serif);
   padding: 12px;
@@ -111,6 +111,49 @@ body:has(.about-page) {
   max-width: none;
   grid-template-columns: repeat(24, minmax(0, 1fr));
   column-gap: 4px;
+}
+
+.category-project-grid {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 79px;
+  padding-top: 118px;
+}
+
+.category-project-grid::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: calc(-1 * var(--site-nav-height) - 12px);
+  bottom: 0;
+  left: 50%;
+  border-left: 1px solid var(--color-gray);
+  pointer-events: none;
+}
+
+.category-project-row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  column-gap: 4px;
+  align-items: start;
+}
+
+.category-project-count {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 64px;
+  padding: 16px 0;
+  background: #ffffff;
+  color: #d2d2d2;
+  font-weight: 400;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  visibility: visible;
 }
 
 .about-page.container {
