@@ -19,7 +19,7 @@ export function AnimatedImageSequence({ children }) {
   const nextIndexRef = useRef(0);
   const isPlayingRef = useRef(false);
 
-  const flushQueue = useCallback(() => {
+  const flushQueue = useCallback(function processQueue() {
     if (isPlayingRef.current) {
       return;
     }
@@ -36,7 +36,7 @@ export function AnimatedImageSequence({ children }) {
     nextReveal().finally(() => {
       nextIndexRef.current += 1;
       isPlayingRef.current = false;
-      flushQueue();
+      processQueue();
     });
   }, []);
 
@@ -59,6 +59,7 @@ export function AnimatedImageSequence({ children }) {
 }
 
 export default function AnimatedImage({
+  alt = "",
   className = "",
   imageClassName = "",
   duration = 0.22,
@@ -135,7 +136,6 @@ export default function AnimatedImage({
     return () => {
       window.clearTimeout(fallbackTimer);
       queuedRevealCleanupRef.current?.();
-      timelineRef.current?.kill();
 
       if (!hasAnimatedRef.current) {
         hasQueuedRef.current = false;
@@ -148,6 +148,7 @@ export default function AnimatedImage({
     <span className={`relative block overflow-hidden ${className}`}>
       <Image
         {...imageProps}
+        alt={alt}
         className={imageClassName}
         onError={(event) => {
           onError?.(event);

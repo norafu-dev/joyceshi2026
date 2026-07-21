@@ -1,3 +1,5 @@
+import { defineField } from "sanity";
+
 const project = {
     name: "project",
     title: "Project",
@@ -16,6 +18,12 @@ const project = {
                 source: "title",
             },
         },
+        defineField({
+            name: "passwordProtected",
+            title: "Password Protected",
+            type: "boolean",
+            initialValue: false,
+        }),
         {
             name: "landingPage",
             title: "LandingPage",

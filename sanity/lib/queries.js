@@ -1,5 +1,54 @@
 import { defineQuery } from "next-sanity";
 
+export const PROJECT_DETAIL_ROW_NAMES = Array.from(
+  { length: 35 },
+  (_, index) => `row${index + 1}`,
+);
+
+const projectDetailMediaProjection = /* groq */ `
+  _key,
+  image {
+    alt,
+    crop,
+    hotspot,
+    asset->{
+      _id,
+      url,
+      metadata {
+        dimensions,
+        lqip
+      }
+    }
+  },
+  video {
+    autoplay,
+    aspectRatio,
+    file {
+      asset->{
+        _id,
+        url,
+        mimeType
+      }
+    },
+    thumbnail {
+      crop,
+      hotspot,
+      asset->{
+        _id,
+        url,
+        metadata {
+          dimensions,
+          lqip
+        }
+      }
+    }
+  }
+`;
+
+const projectDetailRowsProjection = PROJECT_DETAIL_ROW_NAMES.map(
+  (rowName) => `${rowName}[]{${projectDetailMediaProjection}}`,
+).join(",\n");
+
 export const ABOUT_PAGE_QUERY = defineQuery(`
   *[_type == "about"][0] {
     _id,
@@ -116,10 +165,31 @@ export const PROJECT_BY_CATEGORY_AND_SLUG_QUERY = defineQuery(`
     title,
     "slug": slug.current,
     category,
+    passwordProtected,
     year,
     description,
-    awards,
-    buy
+    awards[] {
+      _key,
+      year,
+      award
+    },
+    buy,
+    ${projectDetailRowsProjection}
+  }
+`);
+
+export const PROJECT_NAVIGATION_BY_CATEGORY_QUERY = defineQuery(`
+  *[
+    _type == "project" &&
+    defined(slug.current) &&
+    (
+      category == $category ||
+      $category in category[]
+    )
+  ] | order(categoryPageOrder asc, _id asc) {
+    _id,
+    title,
+    "slug": slug.current
   }
 `);
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import ProjectMedia from "@/components/project-media";
-import ProjectCounter from "./project-counter";
+import ProjectMedia from "./media";
+import ProjectCounter from "./counter";
 
 export default function ProjectGrid({ category, projects = [] }) {
   const rows = chunkProjects(projects);

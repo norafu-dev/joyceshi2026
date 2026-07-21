@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import ProjectGrid from "@/components/project-grid";
-import SiteFooter from "@/components/site-footer";
+import ProjectGrid from "@/components/project/grid";
+import SiteFooter from "@/components/footer";
 import { PROJECT_CATEGORIES, PROJECTS_BY_CATEGORY_QUERY } from "@/sanity/lib/queries";
 import { sanityFetch } from "@/sanity/lib/live";
 

@@ -25,7 +25,7 @@ export function DatedSection({ title, items }) {
     <section className="mb-15 last:mb-0">
       <h2 className="mb-6">{title}</h2>
 
-      <div className="space-y-2">
+      <div>
         {items.map((item) => (
           <div className="grid grid-cols-7 gap-x-1" key={item._key}>
             <p className="col-span-2">{item.year}</p>

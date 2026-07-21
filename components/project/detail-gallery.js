@@ -1,0 +1,89 @@
+import AnimatedImage, {
+  AnimatedImageSequence,
+} from "@/components/animated-image";
+import ProjectMedia from "./media";
+import { PROJECT_DETAIL_ROW_NAMES } from "@/sanity/lib/queries";
+
+export default function ProjectDetailGallery({ project }) {
+  const rows = getProjectRows(project);
+  let nextImageSequenceIndex = 0;
+
+  return (
+    <AnimatedImageSequence>
+      <section className="project-detail-gallery" aria-label="Project media">
+        {rows.map(({ name, media }) => (
+          <div
+            className={`project-detail-row ${media.length === 1 ? "project-detail-row-single" : "project-detail-row-double"}`}
+            key={name}
+          >
+            {media.map((item, itemIndex) => {
+              const itemKey = item._key || `${name}-${itemIndex}`;
+              const hasVideo = Boolean(item.video?.file?.asset?.url);
+              const sequenceIndex = hasVideo ? undefined : nextImageSequenceIndex++;
+
+              return (
+                <figure className="project-detail-media" key={itemKey}>
+                  {hasVideo ? (
+                    <ProjectMedia media={item} title={project.title} />
+                  ) : (
+                    <ProjectDetailImage
+                      item={item}
+                      priority={nextImageSequenceIndex <= 2}
+                      sequenceIndex={sequenceIndex}
+                      sizes={
+                        media.length === 1
+                          ? "(min-width: 768px) 75vw, 100vw"
+                          : "(min-width: 768px) 38vw, 50vw"
+                      }
+                      title={project.title}
+                    />
+                  )}
+                </figure>
+              );
+            })}
+          </div>
+        ))}
+      </section>
+    </AnimatedImageSequence>
+  );
+}
+
+function ProjectDetailImage({ item, priority, sequenceIndex, sizes, title }) {
+  const image = item.image;
+  const imageUrl = image?.asset?.url;
+
+  if (!imageUrl) {
+    return <div aria-hidden="true" className="aspect-[4/3] w-full bg-gray" />;
+  }
+
+  const dimensions = image.asset?.metadata?.dimensions;
+
+  return (
+    <AnimatedImage
+      alt={image.alt || title || ""}
+      blurDataURL={image.asset?.metadata?.lqip}
+      height={dimensions?.height || 1}
+      imageClassName="block h-auto w-full"
+      loading={priority ? "eager" : "lazy"}
+      placeholder={image.asset?.metadata?.lqip ? "blur" : "empty"}
+      sizes={sizes}
+      src={imageUrl}
+      sequenceIndex={sequenceIndex}
+      width={dimensions?.width || 1}
+    />
+  );
+}
+
+function getProjectRows(project) {
+  return PROJECT_DETAIL_ROW_NAMES.map((name) => ({
+    name,
+    media: (project?.[name] || []).filter(hasMedia),
+  })).filter((row) => row.media.length > 0);
+}
+
+function hasMedia(item) {
+  return Boolean(
+    item?.video?.file?.asset?.url ||
+    item?.image?.asset?.url,
+  );
+}

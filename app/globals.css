@@ -8,7 +8,23 @@
 }
 
 :root {
-  --site-nav-height: 38px;
+  --site-nav-height: 48px;
+  --project-media-nav-gap: 118px;
+}
+
+html:not(:has([data-ui="NextStudioLayout"])),
+html:not(:has([data-ui="NextStudioLayout"])) body,
+html:not(:has([data-ui="NextStudioLayout"])) body * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html:not(:has([data-ui="NextStudioLayout"]))::-webkit-scrollbar,
+html:not(:has([data-ui="NextStudioLayout"])) body::-webkit-scrollbar,
+html:not(:has([data-ui="NextStudioLayout"])) body *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body {
@@ -16,9 +32,14 @@ body {
   background: #ffffff;
   color: var(--foreground);
   font-family: var(--font-untitled-serif);
+  font-weight: 400;
   padding: 12px;
   font-size: 16px;
   letter-spacing: -0.002em;
+}
+
+body:not(:has([data-ui="NextStudioLayout"])) :where(h1, h2, h3, h4, h5, h6, b, strong) {
+  font-weight: 400 !important;
 }
 
 body>nav {
@@ -105,6 +126,10 @@ body:has(.about-page) {
   overflow: hidden;
 }
 
+body:has(.project-page) {
+  overflow: hidden;
+}
+
 .container {
   display: grid;
   width: 100%;
@@ -113,12 +138,23 @@ body:has(.about-page) {
   column-gap: 4px;
 }
 
+.category-page {
+  display: flex;
+  min-height: calc(100vh - var(--site-nav-height) - 24px);
+  flex-direction: column;
+}
+
+.category-page > .site-footer {
+  margin-top: auto;
+  padding-top: 200px;
+}
+
 .category-project-grid {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 79px;
-  padding-top: 118px;
+  padding-top: var(--project-media-nav-gap);
 }
 
 .category-project-grid::before {
@@ -154,6 +190,276 @@ body:has(.about-page) {
   text-align: center;
   transform: translate(-50%, -50%);
   visibility: visible;
+}
+
+.project-page {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  align-items: stretch;
+  overflow: hidden;
+  padding: 0 12px 12px;
+}
+
+.project-page::before {
+  content: "";
+  position: fixed;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 - 10px);
+  border-left: 1px solid #000000;
+  pointer-events: none;
+}
+
+.project-page-gallery {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / -1;
+  height: 100%;
+  width: calc(((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 - 10px);
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding-top: calc(12px + var(--site-nav-height) + var(--project-media-nav-gap));
+}
+
+.project-detail-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: #ffffff;
+}
+
+.project-detail-row {
+  display: grid;
+  gap: 3px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: #ffffff;
+}
+
+.project-detail-row-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.project-detail-media {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.project-sidebar {
+  position: fixed;
+  z-index: 1;
+  top: 12px;
+  right: calc(12px - (100vw - 100%));
+  bottom: 12px;
+  left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17);
+  min-width: 0;
+}
+
+.project-sidebar-inner {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding-top: calc(var(--site-nav-height) + var(--project-media-nav-gap));
+  padding-bottom: 64px;
+}
+
+.project-sidebar-title {
+  margin: 0;
+  font: inherit;
+}
+
+.project-sidebar-entry {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 45px;
+}
+
+.project-sidebar-entry> :first-child {
+  grid-column: 1 / span 2;
+}
+
+.project-sidebar-entry> :last-child {
+  grid-column: 3 / span 5;
+}
+
+.project-sidebar-entry p {
+  margin: 0;
+}
+
+.project-sidebar-entry+.project-sidebar-entry {
+  margin-top: 24px;
+}
+
+.project-sidebar-description+.project-sidebar-entry {
+  margin-top: 45px;
+}
+
+.project-sidebar-award+.project-sidebar-award {
+  margin-top: 0;
+}
+
+.project-sidebar-actions {
+  position: fixed;
+  z-index: 2;
+  right: 12px;
+  bottom: 24px;
+  left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17);
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.project-sidebar-actions> :first-child {
+  grid-column: 3 / span 2;
+}
+
+.project-sidebar-actions> :last-child {
+  grid-column: 5 / span 3;
+  justify-self: end;
+}
+
+.project-password-content {
+  grid-column: 1 / -1;
+  width: calc(((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 - 10px);
+  min-width: 0;
+  padding-top: calc(12px + var(--site-nav-height) + var(--project-media-nav-gap));
+}
+
+.project-password-message {
+  margin-bottom: 12px;
+}
+
+.project-password-form {
+  position: relative;
+  width: calc(((100vw - 24px - (23 * 4px)) / 24 + 4px) * 9 - 4px);
+  aspect-ratio: 16 / 9;
+  border: 1px solid #000000;
+  background: #ffffff;
+}
+
+.project-password-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 80px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font: inherit;
+  opacity: 0;
+  text-align: center;
+  -webkit-text-fill-color: transparent;
+}
+
+.project-password-input::placeholder {
+  color: transparent;
+  opacity: 0;
+  -webkit-text-fill-color: transparent;
+}
+
+.project-password-mask {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  color: #000000;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.project-password-mask-placeholder {
+  color: var(--color-gray);
+}
+
+.project-password-input:focus + .project-password-mask-placeholder {
+  font-size: 0;
+}
+
+.project-password-input:focus + .project-password-mask::after {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-left: 2px;
+  background: #000000;
+  content: "";
+  vertical-align: -0.12em;
+  animation: project-password-caret 1s steps(1, end) infinite;
+}
+
+.project-password-input:focus + .project-password-mask-placeholder::after {
+  height: 1rem;
+  margin-left: 0;
+  vertical-align: 0;
+}
+
+@keyframes project-password-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.project-password-submit {
+  position: absolute;
+  top: 50%;
+  right: 24px;
+  z-index: 2;
+  display: grid;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #000000;
+  cursor: pointer;
+  place-items: center;
+  transform: translateY(-50%);
+}
+
+.project-password-submit-icon {
+  display: block;
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 1px;
+}
+
+.project-password-input:disabled,
+.project-password-submit:disabled {
+  cursor: wait;
+}
+
+.project-password-sidebar {
+  position: fixed;
+  z-index: 1;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17);
+  padding-top: calc(var(--site-nav-height) + var(--project-media-nav-gap));
+}
+
+.project-password-title {
+  margin: 0;
+  font: inherit;
+}
+
+.project-password-return {
+  position: fixed;
+  right: 12px;
+  bottom: 24px;
 }
 
 .about-page.container {

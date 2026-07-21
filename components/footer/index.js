@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function SiteFooter({ secondaryHref = "/archive", secondaryLabel = "Archive" }) {
   return (
-    <footer className="container col-span-24 mt-[200px]">
+    <footer className="site-footer container col-span-24">
       <div className="col-span-3 self-end">
         <a href="#page-top">Back to top&nbsp; ↑</a>
       </div>
