@@ -31,7 +31,6 @@ export default function ProjectPasswordGate({ category, title, unlockAction }) {
             aria-describedby="project-password-error"
             aria-invalid={Boolean(state?.error)}
             autoComplete="current-password"
-            autoFocus
             className="project-password-input"
             disabled={pending}
             id="project-password"
