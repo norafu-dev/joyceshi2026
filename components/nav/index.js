@@ -159,6 +159,7 @@ const Nav = ({ about }) => {
     const pathSegments = pathname.split("/").filter(Boolean);
     const activeCategory = pathSegments[0];
     const isLanding = pathname === "/";
+    const isArchive = pathname === "/archive";
     const isCategoryRoute = categories.some(({ value }) => value === activeCategory);
     const isProjectRoute = isCategoryRoute && pathSegments.length === 2;
     const navLineClass = aboutVisible
@@ -168,13 +169,19 @@ const Nav = ({ about }) => {
           : isProjectRoute
             ? "site-nav-line-project"
             : "";
+    const navThemeClass = isLanding
+        ? "site-nav-landing site-nav-dark"
+        : isArchive
+          ? "site-nav-archive site-nav-dark"
+          : "";
+    const navRouteClass = isProjectRoute ? "site-nav-project" : "";
     const showFixedContactLinks = !isProjectRoute || aboutVisible;
     const usesAboutColors = isLanding ? aboutColor : aboutNavActive;
 
     return (
         <>
             <nav
-                className={`container ${isLanding ? "" : "site-nav-fixed"} ${navLineClass} ${usesAboutColors ? "nav-about-colors" : ""}`}
+                className={`container ${isLanding ? "" : "site-nav-fixed"} ${navLineClass} ${navThemeClass} ${navRouteClass} ${usesAboutColors ? "nav-about-colors" : ""}`}
                 ref={navRef}
             >
                 <div className="col-span-12">

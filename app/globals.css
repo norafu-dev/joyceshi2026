@@ -39,7 +39,7 @@ body {
   letter-spacing: -0.002em;
 }
 
-body:has(.landing-page) {
+body:has(>nav.site-nav-landing) {
   --site-nav-offset: var(--site-nav-height);
 }
 
@@ -75,7 +75,7 @@ body:has(>nav.site-nav-fixed)::before {
   pointer-events: none;
 }
 
-body:has(.project-page):has(>nav.site-nav-fixed)::before {
+body:has(>nav.site-nav-project)::before {
   right: auto;
   width: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 - 10px);
 }
@@ -117,22 +117,19 @@ body>nav span {
     opacity 220ms ease;
 }
 
-body:has(.landing-page),
-body:has(.archive-page) {
+body:has(>nav.site-nav-dark) {
   background: #000000;
 }
 
-body:has(.landing-page)>nav,
-body:has(.archive-page)>nav {
+body>nav.site-nav-dark {
   color: #ffffff;
 }
 
-body:has(.archive-page):has(>nav.site-nav-fixed)::before {
+body:has(>nav.site-nav-archive)::before {
   background: #000000;
 }
 
-body:has(.landing-page)>nav .text-gray,
-body:has(.archive-page)>nav .text-gray {
+body>nav.site-nav-dark .text-gray {
   color: #FFFFFF66;
 }
 
@@ -192,7 +189,7 @@ body:has(.about-page) {
   overflow: hidden;
 }
 
-body:has(.project-page) {
+body:has(>nav.site-nav-project) {
   overflow: hidden;
 }
 

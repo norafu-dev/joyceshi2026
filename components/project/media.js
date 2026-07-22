@@ -1,4 +1,5 @@
 import Image from "next/image";
+import AnimatedImage, { AnimatedVideo } from "@/components/animated-image";
 
 const DEFAULT_VIDEO_ASPECT_RATIO = "16 / 9";
 
@@ -37,6 +38,57 @@ export default function ProjectMedia({ media, title = "", priority = false }) {
         placeholder={image.asset?.metadata?.lqip ? "blur" : "empty"}
         blurDataURL={image.asset?.metadata?.lqip}
         preload={priority}
+        sizes="(min-width: 768px) 42vw, 100vw"
+        src={imageUrl}
+        width={dimensions?.width || 1}
+      />
+    );
+  }
+
+  return <div aria-hidden="true" className="aspect-[4/3] w-full bg-gray" />;
+}
+
+export function AnimatedProjectMedia({
+  media,
+  title = "",
+  priority = false,
+  sequenceIndex,
+}) {
+  const videoUrl = media?.video?.file?.asset?.url;
+  const posterUrl = media?.video?.thumbnail?.asset?.url;
+  const image = media?.image;
+  const imageUrl = image?.asset?.url;
+  const dimensions = image?.asset?.metadata?.dimensions;
+
+  if (videoUrl) {
+    return (
+      <AnimatedVideo
+        aria-label={title || "Project video"}
+        loop
+        muted
+        playsInline
+        poster={posterUrl}
+        preload={priority ? "auto" : "metadata"}
+        sequenceIndex={sequenceIndex}
+        src={videoUrl}
+        style={{ aspectRatio: formatAspectRatio(media.video.aspectRatio) }}
+        videoClassName="block h-auto w-full object-cover"
+      >
+        Your browser does not support the video tag.
+      </AnimatedVideo>
+    );
+  }
+
+  if (imageUrl) {
+    return (
+      <AnimatedImage
+        alt={image.alt || title}
+        blurDataURL={image.asset?.metadata?.lqip}
+        height={dimensions?.height || 1}
+        imageClassName="block h-auto w-full"
+        placeholder={image.asset?.metadata?.lqip ? "blur" : "empty"}
+        preload={priority}
+        sequenceIndex={sequenceIndex}
         sizes="(min-width: 768px) 42vw, 100vw"
         src={imageUrl}
         width={dimensions?.width || 1}
