@@ -1,10 +1,34 @@
+"use client";
+
 import Link from "next/link";
 
-export default function SiteFooter({ secondaryHref = "/archive", secondaryLabel = "Archive" }) {
+export default function SiteFooter({
+  scrollContainerSelector,
+  secondaryHref = "/archive",
+  secondaryLabel = "Archive",
+  topHref = "#page-top",
+}) {
+  const handleBackToTop = (event) => {
+    if (!scrollContainerSelector) {
+      return;
+    }
+
+    const scrollContainer = document.querySelector(scrollContainerSelector);
+
+    if (!scrollContainer) {
+      return;
+    }
+
+    event.preventDefault();
+    scrollContainer.scrollTo({ top: 0 });
+  };
+
   return (
     <footer className="site-footer container col-span-24">
       <div className="col-span-3 self-end">
-        <a href="#page-top">Back to top&nbsp; ↑</a>
+        <a href={topHref} onClick={handleBackToTop}>
+          Back to top&nbsp; ↑
+        </a>
       </div>
 
       <div className="col-start-4 col-span-3 self-end">

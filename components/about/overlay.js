@@ -94,7 +94,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
       <div aria-hidden="true" className="about-divider" ref={lineRef} />
 
       <div className="about-page-content container h-full min-h-0 overflow-hidden">
-        <section className="col-span-12 row-start-1 flex h-full flex-col pt-[calc(var(--site-nav-height)+24px)]">
+        <section className="col-start-1 col-span-12 row-start-1 flex h-full flex-col pt-[calc(var(--site-nav-height)+24px)]">
           <div>
             {about?.bio ? (
               <PortableText
@@ -103,20 +103,24 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
               />
             ) : null}
           </div>
-
-          <nav className="mt-auto grid grid-cols-12 gap-x-1">
-            <button
-              className="cursor-pointer justify-self-start border-0 bg-transparent p-0 text-black underline [font:inherit]"
-              onClick={onClose}
-              type="button"
-            >
-              Return
-            </button>
-            <Link className="col-start-4 text-black underline" href="/archive" onClick={onClose}>
-              Archive
-            </Link>
-          </nav>
         </section>
+
+        <nav className="container pointer-events-none col-start-1 col-span-24 row-start-1 self-end">
+          <Link
+            className="pointer-events-auto col-span-3 justify-self-start text-black underline"
+            href="/"
+            onClick={onClose}
+          >
+            Return to work
+          </Link>
+          <Link
+            className="pointer-events-auto col-start-4 text-black underline"
+            href="/archive"
+            onClick={onClose}
+          >
+            Archive
+          </Link>
+        </nav>
 
         <aside className="about-scroll col-start-18 col-span-7 row-start-1 h-full overflow-y-auto pb-4 pt-[calc(var(--site-nav-height)+90px)]">
           {datedSections.map((section) => (

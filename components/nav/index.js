@@ -1,6 +1,7 @@
 "use client";
 
 import AboutOverlay from "@/components/about";
+import NavContactLinks from "./contact-links";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -114,9 +115,13 @@ const Nav = ({ about }) => {
         }
 
         const updateNavHeight = () => {
+            const navStyles = window.getComputedStyle(nav);
+            const paddingTop = Number.parseFloat(navStyles.paddingTop) || 0;
+            const paddingBottom = Number.parseFloat(navStyles.paddingBottom) || 0;
+
             document.documentElement.style.setProperty(
                 "--site-nav-height",
-                `${nav.getBoundingClientRect().height}px`,
+                `${nav.getBoundingClientRect().height - paddingTop - paddingBottom}px`,
             );
         };
 
@@ -151,14 +156,25 @@ const Nav = ({ about }) => {
         return null;
     }
 
-    const activeCategory = pathname.split("/").filter(Boolean)[0];
+    const pathSegments = pathname.split("/").filter(Boolean);
+    const activeCategory = pathSegments[0];
     const isLanding = pathname === "/";
+    const isCategoryRoute = categories.some(({ value }) => value === activeCategory);
+    const isProjectRoute = isCategoryRoute && pathSegments.length === 2;
+    const navLineClass = aboutVisible
+        ? ""
+        : isCategoryRoute && pathSegments.length === 1
+          ? "site-nav-line-category"
+          : isProjectRoute
+            ? "site-nav-line-project"
+            : "";
+    const showFixedContactLinks = !isProjectRoute || aboutVisible;
     const usesAboutColors = isLanding ? aboutColor : aboutNavActive;
 
     return (
         <>
             <nav
-                className={`container ${usesAboutColors ? "nav-about-colors" : ""}`}
+                className={`container ${isLanding ? "" : "site-nav-fixed"} ${navLineClass} ${usesAboutColors ? "nav-about-colors" : ""}`}
                 ref={navRef}
             >
                 <div className="col-span-12">
@@ -214,21 +230,7 @@ const Nav = ({ about }) => {
                     </button>
                 </div>
 
-                <div className="col-start-18 col-span-2 flex flex-col">
-                    <a href="https://www.instagram.com/gloamaxis/?igshid=YmMyMTA2M2Y%3D" target="_blank" rel="noopener noreferrer">
-                        Instagram
-                    </a>
-                    <a href="https://www.linkedin.com/authwall?trk=bf&trkInfo=AQGNWLSerqeJMgAAAZ9foGzoYoxpxz3iECS684sBRXnGjFvtpmFfe6ayL8q-pqrkG12S0xWPYvpXq3TK-KZFi9dqO-tPUzp9PFkA_tAPzmJGt-gSu49Hod6vicm0lbNg9rkgPmI=&original_referer=&sessionRedirect=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fjoyce-shi-553272167" target="_blank" rel="noopener noreferrer">
-                        LinkedIn
-                    </a>
-                </div>
-
-                <div className="col-start-20 col-span-4 flex flex-col">
-                    <a href="mailto:joyceshidesign@gmail.com" target="_blank" rel="noopener noreferrer">
-                        joyceshidesign@gmail.com
-                    </a>
-                    <a href="https://drive.google.com/file/d/1PItNqPCMpBB5bFmDLqDpwux05vBWqp4V/view" target="_blank" rel="noopener noreferrer">CV</a>
-                </div>
+                {showFixedContactLinks ? <NavContactLinks /> : null}
             </nav>
             {aboutVisible ? (
                 <AboutOverlay

@@ -2,6 +2,8 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import SiteFooter from "@/components/footer";
+import NavContactLinks from "@/components/nav/contact-links";
 import ProjectDetailGallery from "@/components/project/detail-gallery";
 import ProjectPasswordGate from "@/components/project/password-gate";
 import {
@@ -90,7 +92,12 @@ export default async function ProjectPage({ params }) {
   return (
     <main className="project-page container" id="page-top">
       <div className="project-page-gallery">
+        <div aria-hidden="true" className="project-gallery-top" id="project-gallery-top" />
         <ProjectDetailGallery project={project} />
+        <SiteFooter
+          scrollContainerSelector=".project-page-gallery"
+          topHref="#project-gallery-top"
+        />
       </div>
 
       <ProjectSidebar
@@ -108,6 +115,10 @@ function ProjectSidebar({ category, nextProject, project }) {
   return (
     <aside className="project-sidebar">
       <div className="about-scroll project-sidebar-inner">
+        <nav className="project-sidebar-contact-nav" aria-label="Contact links">
+          <NavContactLinks layout="sidebar" />
+        </nav>
+
         <div className="project-sidebar-content">
           <h1 className="project-sidebar-title">{project.title}</h1>
 

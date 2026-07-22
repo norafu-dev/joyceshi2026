@@ -19,7 +19,7 @@ export default async function ArchivePage() {
 
   return (
     <main
-      className="archive-page container min-h-[calc(100vh-24px)] pt-[118px] text-white"
+      className="archive-page container min-h-[calc(100vh-24px)] pt-[var(--site-nav-offset)] text-white"
       id="archive-top"
     >
       <ArchiveScrollToTop />
@@ -74,7 +74,7 @@ function ArchiveFooter() {
 
       <div className="col-start-4 col-span-3 self-center">
         <Link className="underline" href="/">
-          Return
+          Return to work
         </Link>
       </div>
 
