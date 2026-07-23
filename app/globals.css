@@ -5,6 +5,9 @@
   --color-foreground: #000000;
   --color-gray: #d2d2d2;
   --color-purple: #6400ff;
+  /* Mobile-first: phone < 680px, tablet 680–999.99px, desktop >= 1000px. */
+  --breakpoint-tablet: 42.5rem;
+  --breakpoint-desktop: 62.5rem;
 }
 
 :root {
@@ -197,8 +200,18 @@ body:has(>nav.site-nav-project) {
   display: grid;
   width: 100%;
   max-width: none;
-  grid-template-columns: repeat(24, minmax(0, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: 4px;
+}
+
+.container.landing-caption {
+  width: auto;
+}
+
+@media (min-width: 62.5rem) {
+  .container {
+    grid-template-columns: repeat(24, minmax(0, 1fr));
+  }
 }
 
 .category-page {
@@ -324,6 +337,10 @@ body:has(.about-page) .project-page::before {
   min-width: 0;
   margin: 0;
   overflow: hidden;
+}
+
+.site-footer-desktop {
+  display: none;
 }
 
 .project-sidebar {
@@ -571,4 +588,492 @@ body:has(.about-page) .project-page::before {
 
 .about-scroll::-webkit-scrollbar {
   display: none;
+}
+
+.about-mobile-scroll {
+  scrollbar-width: none;
+  overscroll-behavior-y: contain;
+}
+
+.about-page-content {
+  display: none;
+}
+
+.about-mobile-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.about-mobile-intro {
+  min-height: calc(100dvh - 44px);
+  padding: 12px;
+}
+
+.about-mobile-header {
+  color: var(--color-gray);
+}
+
+.about-mobile-header button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+}
+
+.about-mobile-bio {
+  margin-top: 12px;
+}
+
+.about-mobile-contact-nav {
+  position: sticky;
+  z-index: 4;
+  top: 0;
+  display: grid;
+  min-height: 44px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: center;
+  column-gap: 4px;
+  padding: 0 12px;
+  border-bottom: 1px solid #000000;
+  background: #ffffff;
+}
+
+.about-mobile-contact-nav > :nth-child(1) {
+  grid-column: 1 / span 2;
+}
+
+.about-mobile-contact-nav > :nth-child(2) {
+  grid-column: 4 / span 3;
+}
+
+.about-mobile-contact-nav > :nth-child(3) {
+  grid-column: 8 / span 3;
+}
+
+.about-mobile-contact-nav > :nth-child(4) {
+  grid-column: 11 / span 2;
+}
+
+.about-mobile-details {
+  padding: 90px 12px 0;
+}
+
+.about-mobile-details .about-info-row {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.about-mobile-details .about-info-section {
+  margin-bottom: 90px;
+}
+
+.about-mobile-details .about-info-heading {
+  margin-right: -12px;
+  margin-left: -12px;
+  padding: 0 12px 4px;
+  border-bottom: 1px solid var(--color-gray);
+}
+
+.about-mobile-details .about-info-year {
+  grid-column: 1 / span 2;
+}
+
+.about-mobile-details .about-info-value {
+  grid-column: 3 / span 10;
+}
+
+.about-mobile-footer {
+  display: grid;
+  min-height: 50dvh;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: end;
+  column-gap: 4px;
+  padding: 0 12px 12px;
+}
+
+.about-mobile-footer > :nth-child(1) {
+  grid-column: 1 / span 3;
+}
+
+.about-mobile-footer > :nth-child(2) {
+  grid-column: 6 / span 2;
+}
+
+.about-mobile-footer > :nth-child(3) {
+  grid-column: 11 / span 2;
+}
+
+.about-mobile-footer button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+}
+
+@media (max-width: 62.499rem) {
+  body:has(>nav.site-nav-project):not(:has(.about-page)) {
+    overflow: auto;
+  }
+
+  body:has(>nav.site-nav-project)::before {
+    display: none;
+  }
+
+  body > nav.site-nav-fixed.site-nav-project {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  body > nav.site-nav-fixed.site-nav-project::before {
+    display: none;
+  }
+
+  .project-mobile-nav {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .project-mobile-nav-more {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-gray);
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .project-detail-page {
+    position: static;
+    display: block;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .project-detail-page::before {
+    display: none;
+  }
+
+  .project-detail-page .project-page-gallery {
+    position: static;
+    height: auto;
+    overflow: visible;
+    padding-top: 0;
+  }
+
+  .project-detail-page .project-sidebar {
+    display: none;
+  }
+
+  .project-password-page {
+    position: static;
+    display: block;
+    min-height: calc(100dvh - 24px);
+    height: auto;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .project-password-page::before {
+    display: none;
+  }
+
+  .project-mobile-title-row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 4px;
+    margin-right: -12px;
+    margin-left: -12px;
+    padding: 34px 12px 7px;
+    border-bottom: 1px solid #000000;
+  }
+
+  .project-mobile-title-row h1 {
+    grid-column: 1 / span 8;
+    margin: 0;
+    font: inherit;
+  }
+
+  .project-mobile-actions {
+    grid-column: 9 / span 4;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  .project-password-content {
+    width: 100%;
+    padding-top: 34px;
+  }
+
+  .project-password-message {
+    margin: 0 0 48px;
+  }
+
+  .project-password-mobile-line {
+    display: block;
+  }
+
+  .project-password-form {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .project-password-input {
+    padding-right: 64px;
+    padding-left: 64px;
+  }
+
+  .project-password-submit {
+    right: 24px;
+  }
+
+  .project-password-submit-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .project-password-sidebar {
+    display: none;
+  }
+
+  .project-mobile-read-more,
+  .project-mobile-information-row {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 4px;
+  }
+
+  .project-mobile-disclosure {
+    position: relative;
+  }
+
+  .project-mobile-disclosure-animating .project-mobile-disclosure-collapsed {
+    position: absolute;
+    inset: 0;
+  }
+
+  .project-mobile-disclosure-animating .project-mobile-disclosure-open {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    background: #ffffff;
+  }
+
+  .project-mobile-disclosure-expanded .project-mobile-disclosure-collapsed {
+    display: none;
+  }
+
+  .project-mobile-disclosure-expanded .project-mobile-disclosure-open {
+    position: relative;
+  }
+
+  .project-mobile-read-more {
+    padding: 22px 0 80px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+
+  .project-mobile-read-more > :first-child,
+  .project-mobile-information-row > :first-child {
+    grid-column: 1 / span 2;
+  }
+
+  .project-mobile-read-more > :last-child,
+  .project-mobile-information-row > :last-child {
+    grid-column: 3 / span 10;
+  }
+
+  .project-mobile-read-more-plus {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 22px;
+    line-height: 0;
+    vertical-align: -1px;
+  }
+
+  .project-mobile-information {
+    padding: 22px 0 55px;
+  }
+
+  .project-mobile-information-row p {
+    margin: 0;
+  }
+
+  .project-mobile-awards {
+    margin-top: 20px;
+  }
+
+  .project-detail-page .project-detail-gallery {
+    width: 100%;
+  }
+
+  .project-detail-page .project-detail-row {
+    display: flex;
+    grid-template-columns: none;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .project-detail-page .project-detail-media {
+    width: 100%;
+  }
+
+  .project-detail-page .project-page-gallery > .site-footer {
+    padding-top: 100px;
+  }
+
+  .site-footer-mobile-project-links {
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  body:has(>nav.site-nav-category) {
+    --project-media-nav-gap: 90px;
+  }
+
+  body:has(>nav.site-nav-category)::before {
+    display: none;
+  }
+
+  body > nav.site-nav-fixed.site-nav-category {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: auto;
+    margin: -12px -12px 0;
+    padding: 12px 12px 90px;
+    pointer-events: auto;
+  }
+
+  body > nav.site-nav-fixed.site-nav-category::before {
+    display: none;
+  }
+
+  .category-project-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 4px;
+    padding-top: 0;
+    row-gap: 0;
+  }
+
+  .category-project-grid::before {
+    display: none;
+  }
+
+  .category-project-row {
+    display: contents;
+  }
+
+  .category-project-card {
+    position: relative;
+    z-index: 1;
+    grid-column: 2 / span 10;
+    margin-bottom: 60px;
+  }
+
+  .category-project-row:last-child > .category-project-card:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .category-project-count {
+    position: fixed;
+    z-index: 0;
+    top: var(--category-project-counter-top, 0);
+    right: 12px;
+    left: 12px;
+    height: 20px;
+    width: auto;
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: var(--color-gray);
+    line-height: 20px;
+    pointer-events: none;
+    text-align: center;
+    transform: none;
+    visibility: hidden;
+  }
+
+  .category-page > .site-footer {
+    padding-top: 100px;
+  }
+
+  .site-footer-mobile {
+    width: calc(100% + 24px);
+    margin-left: -12px;
+    grid-column: 1 / -1;
+  }
+
+  .site-footer-mobile-contact,
+  .site-footer-mobile-actions {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 4px;
+    padding: 0 12px;
+  }
+
+  .site-footer-mobile-contact {
+    min-height: 44px;
+    align-items: center;
+    border-bottom: 1px solid #000000;
+  }
+
+  .site-footer-mobile-contact > :nth-child(1) {
+    grid-column: 1 / span 2;
+  }
+
+  .site-footer-mobile-contact > :nth-child(2) {
+    grid-column: 4 / span 3;
+  }
+
+  .site-footer-mobile-contact > :nth-child(3) {
+    grid-column: 8 / span 3;
+  }
+
+  .site-footer-mobile-contact > :nth-child(4) {
+    grid-column: 11 / span 2;
+    justify-self: end;
+  }
+
+  .site-footer-mobile-actions {
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .site-footer-mobile-actions > :first-child {
+    grid-column: 1 / span 4;
+  }
+
+  .site-footer-mobile-actions > :last-child {
+    grid-column: 10 / span 3;
+  }
+}
+
+@media (min-width: 62.5rem) {
+  .about-page-content {
+    display: grid;
+  }
+
+  .site-footer-mobile {
+    display: none;
+  }
+
+  .site-footer-desktop {
+    display: grid;
+  }
 }

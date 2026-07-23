@@ -38,7 +38,8 @@ export default function ProjectMedia({ media, title = "", priority = false }) {
         placeholder={image.asset?.metadata?.lqip ? "blur" : "empty"}
         blurDataURL={image.asset?.metadata?.lqip}
         preload={priority}
-        sizes="(min-width: 768px) 42vw, 100vw"
+        quality={100}
+        sizes="(min-width: 1000px) 42vw, 83vw"
         src={imageUrl}
         width={dimensions?.width || 1}
       />
@@ -88,8 +89,9 @@ export function AnimatedProjectMedia({
         imageClassName="block h-auto w-full"
         placeholder={image.asset?.metadata?.lqip ? "blur" : "empty"}
         preload={priority}
+        quality={100}
         sequenceIndex={sequenceIndex}
-        sizes="(min-width: 768px) 42vw, 100vw"
+        sizes="(min-width: 1000px) 42vw, 83vw"
         src={imageUrl}
         width={dimensions?.width || 1}
       />

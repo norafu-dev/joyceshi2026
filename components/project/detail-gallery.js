@@ -32,8 +32,8 @@ export default function ProjectDetailGallery({ project }) {
                       sequenceIndex={sequenceIndex}
                       sizes={
                         media.length === 1
-                          ? "(min-width: 768px) 75vw, 100vw"
-                          : "(min-width: 768px) 38vw, 50vw"
+                          ? "(min-width: 1000px) 75vw, 100vw"
+                          : "(min-width: 1000px) 38vw, 100vw"
                       }
                       title={project.title}
                     />

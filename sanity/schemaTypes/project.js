@@ -34,23 +34,29 @@ const project = {
             title: "Landing Page Order",
             type: "number",
         },
-        {
+        defineField({
             name: "landingPageCover",
             title: "Landing Page Cover",
             type: "object",
             fields: [
-                {
+                defineField({
                     name: "desktop",
                     title: "Desktop",
                     type: "image",
-                },
-                {
+                    options: {
+                        hotspot: true,
+                    },
+                }),
+                defineField({
                     name: "mobile",
-                    title: "Mobile",
+                    title: "Mobile / Tablet",
                     type: "image",
-                }
+                    options: {
+                        hotspot: true,
+                    },
+                }),
             ],
-        },
+        }),
         {
             name: "category",
             title: "Category",

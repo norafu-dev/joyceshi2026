@@ -119,6 +119,8 @@ export const LANDING_PAGE_PROJECTS_QUERY = defineQuery(`
     category,
     landingPageCover {
       desktop {
+        crop,
+        hotspot,
         asset->{
           _id,
           url,
@@ -129,6 +131,8 @@ export const LANDING_PAGE_PROJECTS_QUERY = defineQuery(`
         }
       },
       mobile {
+        crop,
+        hotspot,
         asset->{
           _id,
           url,

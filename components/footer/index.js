@@ -3,28 +3,101 @@
 import Link from "next/link";
 
 export default function SiteFooter({
+  mobileBuyHref,
+  mobileNextHref,
+  mobileNextTitle,
   scrollContainerSelector,
   secondaryHref = "/archive",
   secondaryLabel = "Archive",
   topHref = "#page-top",
 }) {
   const handleBackToTop = (event) => {
-    if (!scrollContainerSelector) {
-      return;
-    }
-
-    const scrollContainer = document.querySelector(scrollContainerSelector);
-
-    if (!scrollContainer) {
-      return;
-    }
-
     event.preventDefault();
-    scrollContainer.scrollTo({ top: 0 });
+    const scrollContainer = scrollContainerSelector
+      ? document.querySelector(scrollContainerSelector)
+      : null;
+    const hasIndependentScroll =
+      scrollContainer &&
+      scrollContainer.scrollHeight > scrollContainer.clientHeight + 1 &&
+      ["auto", "scroll"].includes(
+        window.getComputedStyle(scrollContainer).overflowY,
+      );
+
+    if (hasIndependentScroll) {
+      scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <footer className="site-footer container col-span-24">
+    <>
+      <footer className="site-footer site-footer-mobile container desktop:hidden">
+        <nav
+          aria-label="Contact links"
+          className="site-footer-mobile-contact"
+        >
+          <a href="mailto:joyceshidesign@gmail.com">email</a>
+          <a
+            href="https://www.instagram.com/gloamaxis/?igshid=YmMyMTA2M2Y%3D"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Instagram
+          </a>
+          <a
+            href="https://www.linkedin.com/in/joyce-shi-553272167"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            LinkedIn
+          </a>
+          <a
+            href="https://drive.google.com/file/d/1PItNqPCMpBB5bFmDLqDpwux05vBWqp4V/view"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            CV
+          </a>
+        </nav>
+
+        <div className="site-footer-mobile-actions">
+          <a href={topHref} onClick={handleBackToTop}>
+            Back to top ↑
+          </a>
+          {mobileNextHref ? (
+            <span className="site-footer-mobile-project-links">
+              {mobileBuyHref ? (
+                <>
+                  <a
+                    className="text-purple underline"
+                    href={mobileBuyHref}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Buy
+                  </a>
+                  <span aria-hidden="true"> / </span>
+                </>
+              ) : null}
+              <Link
+                aria-label={`Next project: ${mobileNextTitle || "View project"}`}
+                className="underline"
+                href={mobileNextHref}
+              >
+                Next
+              </Link>
+            </span>
+          ) : (
+            <Link className="justify-self-end underline" href={secondaryHref}>
+              {secondaryLabel}
+            </Link>
+          )}
+        </div>
+      </footer>
+
+      <footer className="site-footer site-footer-desktop container col-span-24">
       <div className="col-span-3 self-end">
         <a href={topHref} onClick={handleBackToTop}>
           Back to top&nbsp; ↑
@@ -52,6 +125,7 @@ export default function SiteFooter({
           CV
         </a>
       </div>
-    </footer>
+      </footer>
+    </>
   );
 }

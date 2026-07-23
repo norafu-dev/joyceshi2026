@@ -10,14 +10,26 @@ export default function LandingPage({ projects = [] }) {
     () =>
       projects
         .map((project) => {
-          const desktopUrl = project.landingPageCover?.desktop?.asset?.url;
+          const desktopImage = project.landingPageCover?.desktop;
+          const mobileImage = project.landingPageCover?.mobile;
+          const desktopAsset = desktopImage?.asset;
+          const mobileAsset = mobileImage?.asset;
 
           return {
             id: project._id,
             category: getCategoryValue(project.category),
             slug: project.slug,
             title: project.title,
-            desktopUrl,
+            desktopUrl: desktopAsset?.url,
+            desktopLqip: desktopAsset?.metadata?.lqip,
+            desktopAspectRatio:
+              desktopAsset?.metadata?.dimensions?.aspectRatio,
+            desktopPosition: getObjectPosition(desktopImage),
+            mobileUrl: mobileAsset?.url,
+            mobileLqip: mobileAsset?.metadata?.lqip,
+            mobileAspectRatio:
+              mobileAsset?.metadata?.dimensions?.aspectRatio,
+            mobilePosition: getObjectPosition(mobileImage),
           };
         })
         .filter((slide) => slide.desktopUrl),
@@ -111,21 +123,27 @@ export default function LandingPage({ projects = [] }) {
   }, []);
 
   if (!currentSlide) {
-    return <main className="landing-page fixed inset-0 z-0 bg-black" />;
+    return (
+      <main
+        className="landing-page fixed inset-0 z-0 bg-black"
+        style={{ backgroundColor: "#000000" }}
+      />
+    );
   }
 
   return (
     <main
       className="landing-page fixed inset-0 z-0 overflow-hidden bg-black text-white"
       onWheel={handleWheel}
+      style={{ backgroundColor: "#000000" }}
     >
       <div ref={currentLayerRef} className="absolute inset-0 opacity-100">
-        <LandingSlide slide={currentSlide} priority={visibleIndex === 0} />
+        <LandingSlide slide={currentSlide} preload={visibleIndex === 0} />
       </div>
 
       {incomingSlide ? (
         <div ref={incomingLayerRef} className="absolute inset-0 opacity-0">
-          <LandingSlide slide={incomingSlide} priority={false} />
+          <LandingSlide slide={incomingSlide} preload={false} />
         </div>
       ) : null}
 
@@ -150,24 +168,74 @@ export default function LandingPage({ projects = [] }) {
   );
 }
 
-function LandingSlide({ priority, slide }) {
+function LandingSlide({ preload, slide }) {
+  const desktopImage = (
+    <ResponsiveLandingImage
+      aspectRatio={slide.desktopAspectRatio}
+      className={slide.mobileUrl ? "hidden desktop:block" : ""}
+      lqip={slide.desktopLqip}
+      position={slide.desktopPosition}
+      preload={preload && !slide.mobileUrl}
+      src={slide.desktopUrl}
+      title={slide.title}
+      useFetchPriority={preload && Boolean(slide.mobileUrl)}
+    />
+  );
+
+  if (!slide.mobileUrl) {
+    return desktopImage;
+  }
+
+  return (
+    <>
+      {desktopImage}
+      <ResponsiveLandingImage
+        aspectRatio={slide.mobileAspectRatio}
+        className="desktop:hidden"
+        lqip={slide.mobileLqip}
+        position={slide.mobilePosition}
+        src={slide.mobileUrl}
+        title={slide.title}
+        useFetchPriority={preload}
+      />
+    </>
+  );
+}
+
+function ResponsiveLandingImage({
+  aspectRatio,
+  className,
+  lqip,
+  position,
+  preload = false,
+  src,
+  title,
+  useFetchPriority = false,
+}) {
+  const hasBlurPlaceholder = Boolean(lqip);
+
   return (
     <Image
-      key={slide.desktopUrl}
-      className="object-cover"
-      src={slide.desktopUrl}
-      alt={slide.title || ""}
+      key={src}
+      className={`object-cover ${className}`.trim()}
+      src={src}
+      alt={title || ""}
+      blurDataURL={hasBlurPlaceholder ? lqip : undefined}
       fill
-      priority={priority}
-      sizes="100vw"
+      placeholder={hasBlurPlaceholder ? "blur" : "empty"}
+      preload={preload}
+      quality={100}
+      sizes={getCoverSizes(aspectRatio)}
+      style={{ objectPosition: position }}
+      fetchPriority={useFetchPriority ? "high" : undefined}
     />
   );
 }
 
 function LandingCaption({ category, current, onNext, slug, title, total }) {
   return (
-    <div className="container pointer-events-none absolute inset-x-3 bottom-3 z-20 text-white">
-      <div className="col-span-12">
+    <div className="landing-caption container pointer-events-none absolute inset-x-3 bottom-3 z-20 text-white">
+      <div className="col-span-10 desktop:col-span-12">
         {category && slug ? (
           <Link
             className="pointer-events-auto"
@@ -182,7 +250,7 @@ function LandingCaption({ category, current, onNext, slug, title, total }) {
 
       <button
         type="button"
-        className="pointer-events-auto col-start-20 col-span-4 justify-self-start text-left"
+        className="pointer-events-auto col-start-11 col-span-2 justify-self-start text-left desktop:col-start-20 desktop:col-span-4"
         onClick={onNext}
       >
         {current}/{total}
@@ -193,4 +261,19 @@ function LandingCaption({ category, current, onNext, slug, title, total }) {
 
 function getCategoryValue(category) {
   return Array.isArray(category) ? category[0] : category;
+}
+
+function getObjectPosition(image) {
+  const x = image?.hotspot?.x ?? 0.5;
+  const y = image?.hotspot?.y ?? 0.5;
+
+  return `${x * 100}% ${y * 100}%`;
+}
+
+function getCoverSizes(aspectRatio) {
+  const safeAspectRatio =
+    Number.isFinite(aspectRatio) && aspectRatio > 0 ? aspectRatio : 1;
+  const portraitCoverWidth = Math.ceil(safeAspectRatio * 100);
+
+  return `(max-width: 999px) and (orientation: portrait) ${portraitCoverWidth}vh, 100vw`;
 }

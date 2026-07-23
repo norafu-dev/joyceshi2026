@@ -22,14 +22,17 @@ export function DatedSection({ title, items }) {
   }
 
   return (
-    <section className="mb-15 last:mb-0">
-      <h2 className="mb-6">{title}</h2>
+    <section className="about-info-section mb-15 last:mb-0">
+      <h2 className="about-info-heading mb-6">{title}</h2>
 
       <div>
         {items.map((item) => (
-          <div className="grid grid-cols-7 gap-x-1" key={item._key}>
-            <p className="col-span-2">{item.year}</p>
-            <div className="col-span-5">
+          <div
+            className="about-info-row grid grid-cols-7 gap-x-1"
+            key={item._key}
+          >
+            <p className="about-info-year col-span-2">{item.year}</p>
+            <div className="about-info-value col-span-5">
               {item.text ? (
                 <PortableText
                   components={listPortableTextComponents}
@@ -50,8 +53,8 @@ export function TextSection({ title, value }) {
   }
 
   return (
-    <section className="mb-16 last:mb-0">
-      <h2 className="mb-6">{title}</h2>
+    <section className="about-info-section mb-16 last:mb-0">
+      <h2 className="about-info-heading mb-6">{title}</h2>
       <PortableText components={listPortableTextComponents} value={value} />
     </section>
   );

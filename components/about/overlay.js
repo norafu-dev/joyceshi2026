@@ -10,6 +10,7 @@ import { portableTextComponents } from "./portable-text";
 export default function AboutOverlay({ about, open, onClose, onExited }) {
   const overlayRef = useRef(null);
   const lineRef = useRef(null);
+  const mobileScrollRef = useRef(null);
   const timelineRef = useRef(null);
 
   useEffect(() => {
@@ -86,14 +87,25 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
     };
   }, [onExited, open]);
 
+  const handleBackToTop = () => {
+    mobileScrollRef.current?.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div
-      className="about-page fixed inset-0 z-10 overflow-hidden bg-white p-3 text-gray"
+      className="about-page fixed inset-0 z-30 overflow-hidden bg-white p-0 text-gray desktop:z-10 desktop:p-3"
       ref={overlayRef}
     >
-      <div aria-hidden="true" className="about-divider" ref={lineRef} />
+      <div
+        aria-hidden="true"
+        className="about-divider hidden desktop:block"
+        ref={lineRef}
+      />
 
-      <div className="about-page-content container h-full min-h-0 overflow-hidden">
+      <div className="about-page-content container hidden h-full min-h-0 overflow-hidden desktop:grid">
         <section className="col-start-1 col-span-12 row-start-1 flex h-full flex-col pt-[calc(var(--site-nav-height)+24px)]">
           <div>
             {about?.bio ? (
@@ -137,6 +149,140 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
           />
         </aside>
       </div>
+
+      <div
+        className="about-mobile-scroll h-full overflow-y-auto desktop:hidden"
+        ref={mobileScrollRef}
+      >
+        <section className="about-mobile-intro">
+          <MobileAboutHeader onNavigate={onClose} />
+
+          <div className="about-mobile-bio">
+            {about?.bio ? (
+              <PortableText
+                components={portableTextComponents}
+                value={about.bio}
+              />
+            ) : null}
+          </div>
+        </section>
+
+        <MobileContactNav />
+
+        <div className="about-mobile-details">
+          {datedSections.map((section) => (
+            <DatedSection
+              items={about?.[section.field]}
+              key={section.field}
+              title={section.title}
+            />
+          ))}
+
+          <TextSection
+            title="Clients & Collaborators"
+            value={about?.clientsCollaborators}
+          />
+        </div>
+
+        <nav className="about-mobile-footer text-black">
+          <button
+            className="justify-self-start"
+            onClick={handleBackToTop}
+            type="button"
+          >
+            Back to top ↑
+          </button>
+          <Link
+            className="justify-self-start underline"
+            href="/"
+            onClick={onClose}
+          >
+            Return
+          </Link>
+          <Link
+            className="justify-self-end underline"
+            href="/archive"
+            onClick={onClose}
+          >
+            Archive
+          </Link>
+        </nav>
+      </div>
     </div>
+  );
+}
+
+function MobileAboutHeader({ onNavigate }) {
+  return (
+    <header className="about-mobile-header">
+      <button
+        className="text-purple"
+        onClick={onNavigate}
+        type="button"
+      >
+        Joyce Shi{" "}
+      </button>
+      <span>
+        {" "}is an award-winning design director & independent publisher based in
+        New York working across{" "}
+      </span>
+      <Link
+        className="text-black underline"
+        href="/brand-campaign-system"
+        onClick={onNavigate}
+      >
+        brand & campaign system
+      </Link>
+      <span>, </span>
+      <Link
+        className="text-black underline"
+        href="/print-editorial-design"
+        onClick={onNavigate}
+      >
+        print & editorial design
+      </Link>
+      <span> and </span>
+      <Link
+        className="text-black underline"
+        href="/digital-design"
+        onClick={onNavigate}
+      >
+        digital design
+      </Link>
+      <span>.</span>
+    </header>
+  );
+}
+
+function MobileContactNav() {
+  return (
+    <nav
+      aria-label="Contact links"
+      className="about-mobile-contact-nav text-black"
+    >
+      <a href="mailto:joyceshidesign@gmail.com">email</a>
+      <a
+        href="https://www.instagram.com/gloamaxis/?igshid=YmMyMTA2M2Y%3D"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Instagram
+      </a>
+      <a
+        href="https://www.linkedin.com/authwall?trk=bf&trkInfo=AQGNWLSerqeJMgAAAZ9foGzoYoxpxz3iECS684sBRXnGjFvtpmFfe6ayL8q-pqrkG12S0xWPYvpXq3TK-KZFi9dqO-tPUzp9PFkA_tAPzmJGt-gSu49Hod6vicm0lbNg9rkgPmI=&original_referer=&sessionRedirect=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fjoyce-shi-553272167"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        LinkedIn
+      </a>
+      <a
+        className="justify-self-end"
+        href="https://drive.google.com/file/d/1PItNqPCMpBB5bFmDLqDpwux05vBWqp4V/view"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        CV
+      </a>
+    </nav>
   );
 }

@@ -4,9 +4,9 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 export default function ProjectCounter({ total }) {
   const counterRef = useRef(null);
-  const currentRowRef = useRef(0);
+  const currentRowRef = useRef(-1);
   const frameRef = useRef(null);
-  const [current, setCurrent] = useState(Math.min(2, total));
+  const [current, setCurrent] = useState(1);
 
   useLayoutEffect(() => {
     const counter = counterRef.current;
@@ -14,6 +14,74 @@ export default function ProjectCounter({ total }) {
 
     if (!counter || !grid) {
       return undefined;
+    }
+
+    if (window.matchMedia("(max-width: 999px)").matches) {
+      const projectCards = Array.from(
+        grid.querySelectorAll(".category-project-card"),
+      );
+
+      const updateMobileCurrent = () => {
+        const counterAnchorTop =
+          projectCards[0].getBoundingClientRect().bottom +
+          window.scrollY +
+          14;
+
+        counter.style.setProperty(
+          "--category-project-counter-top",
+          `${counterAnchorTop}px`,
+        );
+        counter.style.visibility = "visible";
+
+        const counterRect = counter.getBoundingClientRect();
+        const counterLine = counterRect.top + counterRect.height / 2;
+        let nextCurrent = 1;
+
+        projectCards.forEach((projectCard) => {
+          if (projectCard.getBoundingClientRect().top <= counterLine) {
+            nextCurrent = Number(projectCard.dataset.projectIndex) + 1;
+          }
+        });
+
+        setCurrent((previousCurrent) =>
+          previousCurrent === nextCurrent ? previousCurrent : nextCurrent,
+        );
+      };
+
+      const scheduleMobileUpdate = () => {
+        if (frameRef.current !== null) {
+          return;
+        }
+
+        frameRef.current = window.requestAnimationFrame(() => {
+          frameRef.current = null;
+          updateMobileCurrent();
+        });
+      };
+
+      scheduleMobileUpdate();
+      window.addEventListener("scroll", scheduleMobileUpdate, {
+        passive: true,
+      });
+      window.addEventListener("resize", scheduleMobileUpdate);
+
+      const resizeObserver = new ResizeObserver(scheduleMobileUpdate);
+      resizeObserver.observe(grid);
+      projectCards.forEach((projectCard) =>
+        resizeObserver.observe(projectCard),
+      );
+
+      return () => {
+        window.removeEventListener("scroll", scheduleMobileUpdate);
+        window.removeEventListener("resize", scheduleMobileUpdate);
+        resizeObserver.disconnect();
+        counter.style.removeProperty("--category-project-counter-top");
+        counter.style.removeProperty("visibility");
+
+        if (frameRef.current !== null) {
+          window.cancelAnimationFrame(frameRef.current);
+        }
+      };
     }
 
     const rows = Array.from(grid.querySelectorAll(".category-project-row"));

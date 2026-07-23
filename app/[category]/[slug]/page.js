@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import SiteFooter from "@/components/footer";
 import NavContactLinks from "@/components/nav/contact-links";
 import ProjectDetailGallery from "@/components/project/detail-gallery";
+import ProjectMobileDetails from "@/components/project/mobile-details";
 import ProjectPasswordGate from "@/components/project/password-gate";
 import {
   PROJECT_BY_CATEGORY_AND_SLUG_QUERY,
@@ -45,6 +46,7 @@ export default async function ProjectPage({ params }) {
     notFound();
   }
 
+  const nextProject = getNextProject(categoryProjects, project._id);
   const cookieStore = await cookies();
 
   if (project.passwordProtected) {
@@ -79,7 +81,12 @@ export default async function ProjectPage({ params }) {
 
       return (
         <ProjectPasswordGate
+          buyHref={project.buy}
           category={category}
+          nextHref={
+            nextProject ? `/${category}/${nextProject.slug}` : undefined
+          }
+          nextTitle={nextProject?.title}
           title={project.title}
           unlockAction={unlockProject}
         />
@@ -87,16 +94,24 @@ export default async function ProjectPage({ params }) {
     }
   }
 
-  const nextProject = getNextProject(categoryProjects, project._id);
-
   return (
-    <main className="project-page container" id="page-top">
+    <main className="project-page project-detail-page container" id="page-top">
       <div className="project-page-gallery">
         <div aria-hidden="true" className="project-gallery-top" id="project-gallery-top" />
+        <ProjectMobileDetails
+          category={category}
+          nextProject={nextProject}
+          project={project}
+        />
         <ProjectDetailGallery project={project} />
         <SiteFooter
+          mobileBuyHref={project.buy}
+          mobileNextHref={
+            nextProject ? `/${category}/${nextProject.slug}` : undefined
+          }
+          mobileNextTitle={nextProject?.title}
           scrollContainerSelector=".project-page-gallery"
-          topHref="#project-gallery-top"
+          topHref="#page-top"
         />
       </div>
 

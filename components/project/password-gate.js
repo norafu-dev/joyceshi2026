@@ -5,38 +5,66 @@ import { useActionState, useState } from "react";
 
 const INITIAL_STATE = { error: "" };
 
-export default function ProjectPasswordGate({ category, title, unlockAction }) {
+export default function ProjectPasswordGate({
+  buyHref,
+  category,
+  nextHref,
+  nextTitle,
+  title,
+  unlockAction,
+}) {
   const [maskLength, setMaskLength] = useState(0);
   const [state, formAction, pending] = useActionState(
-    unlockAction,
+    async (previousState, formData) => {
+      const result = await unlockAction(previousState, formData);
+
+      // A successful action redirects and never reaches this line. Only clear
+      // the mask when the server explicitly returns a validation failure.
+      setMaskLength(0);
+      return result;
+    },
     INITIAL_STATE,
   );
+  const visibleError = maskLength || pending ? "" : state?.error || "";
 
   return (
     <main className="project-page project-password-page container" id="page-top">
+      <header className="project-mobile-title-row project-password-mobile-title desktop:hidden">
+        <h1>{title}</h1>
+        <PasswordProjectActions
+          buyHref={buyHref}
+          nextHref={nextHref}
+          nextTitle={nextTitle}
+        />
+      </header>
+
       <section className="project-password-content">
         <p className="project-password-message">
-          This project is confidential. Enter password to view :-)
+          <span className="project-password-mobile-line">
+            This project is confidential.
+          </span>{" "}
+          <span className="project-password-mobile-line">
+            Enter password to view :-)
+          </span>
         </p>
 
         <form
           action={formAction}
           className="project-password-form"
-          onSubmit={() => setMaskLength(0)}
         >
           <label className="sr-only" htmlFor="project-password">
             Project password
           </label>
           <input
             aria-describedby="project-password-error"
-            aria-invalid={Boolean(state?.error)}
+            aria-invalid={Boolean(visibleError)}
             autoComplete="current-password"
             className="project-password-input"
             disabled={pending}
             id="project-password"
             name="password"
             onInput={(event) => setMaskLength(event.currentTarget.value.length)}
-            placeholder={state?.error || "enter password here"}
+            placeholder={visibleError || "enter password here"}
             required
             type="password"
           />
@@ -48,7 +76,7 @@ export default function ProjectPasswordGate({ category, title, unlockAction }) {
           >
             {maskLength
               ? "#".repeat(maskLength)
-              : state?.error || "enter password here"}
+              : visibleError || "enter password here"}
           </span>
           <button
             aria-label="Submit password"
@@ -59,9 +87,12 @@ export default function ProjectPasswordGate({ category, title, unlockAction }) {
             <svg
               aria-hidden="true"
               className="project-password-submit-icon"
-              viewBox="0 0 11 11"
+              viewBox="0 0 18 18"
             >
-              <path d="M0.5 5.5H10.5M6 0.5L10.5 5.5L6 10.5" />
+              <path
+                d="M0.5 9H17.5M9.5 0.5L17.5 9L9.5 17.5"
+                vectorEffect="non-scaling-stroke"
+              />
             </svg>
           </button>
           <p
@@ -69,7 +100,7 @@ export default function ProjectPasswordGate({ category, title, unlockAction }) {
             className="sr-only"
             id="project-password-error"
           >
-            {state?.error}
+            {visibleError}
           </p>
         </form>
       </section>
@@ -81,5 +112,36 @@ export default function ProjectPasswordGate({ category, title, unlockAction }) {
         </Link>
       </aside>
     </main>
+  );
+}
+
+function PasswordProjectActions({ buyHref, nextHref, nextTitle }) {
+  return (
+    <nav className="project-mobile-actions" aria-label="Project navigation">
+      {buyHref ? (
+        <a
+          className="text-purple underline"
+          href={buyHref}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Buy
+        </a>
+      ) : (
+        <span aria-disabled="true" className="text-purple underline">
+          Buy
+        </span>
+      )}
+      {nextHref ? <span aria-hidden="true"> / </span> : null}
+      {nextHref ? (
+        <Link
+          aria-label={`Next project: ${nextTitle || "View project"}`}
+          className="underline"
+          href={nextHref}
+        >
+          Next
+        </Link>
+      ) : null}
+    </nav>
   );
 }

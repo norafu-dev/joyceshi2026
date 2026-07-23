@@ -161,10 +161,11 @@ const Nav = ({ about }) => {
     const isLanding = pathname === "/";
     const isArchive = pathname === "/archive";
     const isCategoryRoute = categories.some(({ value }) => value === activeCategory);
+    const isCategoryIndexRoute = isCategoryRoute && pathSegments.length === 1;
     const isProjectRoute = isCategoryRoute && pathSegments.length === 2;
     const navLineClass = aboutVisible
         ? ""
-        : isCategoryRoute && pathSegments.length === 1
+        : isCategoryIndexRoute
           ? "site-nav-line-category"
           : isProjectRoute
             ? "site-nav-line-project"
@@ -174,7 +175,11 @@ const Nav = ({ about }) => {
         : isArchive
           ? "site-nav-archive site-nav-dark"
           : "";
-    const navRouteClass = isProjectRoute ? "site-nav-project" : "";
+    const navRouteClass = isProjectRoute
+        ? "site-nav-project"
+        : isCategoryIndexRoute
+          ? "site-nav-category"
+          : "";
     const showFixedContactLinks = !isProjectRoute || aboutVisible;
     const usesAboutColors = isLanding ? aboutColor : aboutNavActive;
 
@@ -184,7 +189,27 @@ const Nav = ({ about }) => {
                 className={`container ${isLanding ? "" : "site-nav-fixed"} ${navLineClass} ${navThemeClass} ${navRouteClass} ${usesAboutColors ? "nav-about-colors" : ""}`}
                 ref={navRef}
             >
-                <div className="col-span-12">
+                {isProjectRoute ? (
+                    <div className="project-mobile-nav col-span-12 desktop:hidden">
+                        <button
+                            className={`cursor-pointer border-0 bg-transparent p-0 text-left text-inherit [font:inherit] ${usesAboutColors ? "text-purple" : ""}`}
+                            onClick={handleJoyceClick}
+                            type="button"
+                        >
+                            Joyce Shi
+                        </button>
+                        <button
+                            aria-label="Open more information"
+                            className="project-mobile-nav-more"
+                            onClick={handleOpenAbout}
+                            type="button"
+                        >
+                            (...)
+                        </button>
+                    </div>
+                ) : null}
+
+                <div className={`col-span-12 ${isProjectRoute ? "hidden desktop:block" : ""}`}>
                     <button
                         className={`cursor-pointer border-0 bg-transparent p-0 text-left text-inherit [font:inherit] ${usesAboutColors ? "text-purple" : ""}`}
                         onClick={handleJoyceClick}
@@ -237,7 +262,11 @@ const Nav = ({ about }) => {
                     </button>
                 </div>
 
-                {showFixedContactLinks ? <NavContactLinks /> : null}
+                {showFixedContactLinks ? (
+                    <div className="hidden desktop:contents">
+                        <NavContactLinks />
+                    </div>
+                ) : null}
             </nav>
             {aboutVisible ? (
                 <AboutOverlay

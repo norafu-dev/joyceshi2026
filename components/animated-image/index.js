@@ -94,6 +94,7 @@ export default function AnimatedImage({
         {...imageProps}
         alt={alt}
         className={imageClassName}
+        quality={100}
         onError={(event) => {
           onError?.(event);
           queueOrReveal();
