@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import gsap from "gsap";
+import NavContactLinks from "@/components/nav/contact-links";
 import { datedSections, DatedSection, TextSection } from "./sections";
 import { portableTextComponents } from "./portable-text";
 
@@ -134,7 +135,14 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
           </Link>
         </nav>
 
-        <aside className="about-scroll col-start-18 col-span-7 row-start-1 h-full overflow-y-auto pb-4 pt-[calc(var(--site-nav-height)+90px)]">
+        <aside className="about-scroll col-start-18 col-span-7 row-start-1 h-full overflow-y-auto overscroll-y-contain pb-4">
+          <nav
+            aria-label="Contact links"
+            className="about-desktop-contact-nav"
+          >
+            <NavContactLinks layout="sidebar" />
+          </nav>
+
           {datedSections.map((section) => (
             <DatedSection
               items={about?.[section.field]}

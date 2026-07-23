@@ -180,7 +180,7 @@ const Nav = ({ about }) => {
         : isCategoryIndexRoute
           ? "site-nav-category"
           : "";
-    const showFixedContactLinks = !isProjectRoute || aboutVisible;
+    const showFixedContactLinks = !isProjectRoute && !aboutVisible;
     const usesAboutColors = isLanding ? aboutColor : aboutNavActive;
 
     return (

@@ -599,6 +599,30 @@ body:has(.about-page) .project-page::before {
   display: none;
 }
 
+.about-desktop-contact-nav {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  padding-bottom: 90px;
+  color: #000000;
+}
+
+.about-desktop-contact-nav > :first-child {
+  display: flex;
+  grid-column: 1 / span 2;
+  flex-direction: column;
+}
+
+.about-desktop-contact-nav > :last-child {
+  display: flex;
+  grid-column: 3 / span 5;
+  flex-direction: column;
+}
+
+.about-desktop-contact-nav a {
+  color: #000000;
+}
+
 .about-mobile-scroll::-webkit-scrollbar {
   display: none;
 }
