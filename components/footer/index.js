@@ -1,5 +1,6 @@
 "use client";
 
+import BackToTopIcon from "@/components/back-to-top-icon";
 import Link from "next/link";
 
 export default function SiteFooter({
@@ -64,7 +65,7 @@ export default function SiteFooter({
 
         <div className="site-footer-mobile-actions">
           <a href={topHref} onClick={handleBackToTop}>
-            Back to top ↑
+            Back to top <BackToTopIcon />
           </a>
           {mobileNextHref ? (
             <span className="site-footer-mobile-project-links">
@@ -100,7 +101,7 @@ export default function SiteFooter({
       <footer className="site-footer site-footer-desktop container col-span-24">
       <div className="col-span-3 self-end">
         <a href={topHref} onClick={handleBackToTop}>
-          Back to top&nbsp; ↑
+          Back to top <BackToTopIcon />
         </a>
       </div>
 

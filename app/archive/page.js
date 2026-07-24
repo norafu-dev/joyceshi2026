@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AnimatedImage, { AnimatedImageSequence } from "@/components/animated-image";
+import BackToTopIcon from "@/components/back-to-top-icon";
 import ArchiveScrollToTop from "./scroll-to-top";
 import { ARCHIVE_PAGE_QUERY } from "@/sanity/lib/queries";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -19,7 +20,7 @@ export default async function ArchivePage() {
 
   return (
     <main
-      className="archive-page container min-h-[calc(100vh-24px)] pt-[var(--site-nav-offset)] text-white"
+      className="archive-page container min-h-[calc(100vh-24px)] pt-[var(--project-media-nav-gap)] text-white"
       id="archive-top"
     >
       <ArchiveScrollToTop />
@@ -69,7 +70,9 @@ function ArchiveFooter() {
   return (
     <footer className="container col-span-24 mt-[200px] text-white">
       <div className="col-span-3 self-center">
-        <a href="#">Back to top &uarr;</a>
+        <a href="#">
+          Back to top <BackToTopIcon />
+        </a>
       </div>
 
       <div className="col-start-4 col-span-3 self-center">

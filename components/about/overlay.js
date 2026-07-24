@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import gsap from "gsap";
+import BackToTopIcon from "@/components/back-to-top-icon";
 import NavContactLinks from "@/components/nav/contact-links";
 import { datedSections, DatedSection, TextSection } from "./sections";
 import { portableTextComponents } from "./portable-text";
@@ -198,7 +199,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
             onClick={handleBackToTop}
             type="button"
           >
-            Back to top ↑
+            Back to top <BackToTopIcon />
           </button>
           <Link
             className="justify-self-start underline"

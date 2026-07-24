@@ -167,9 +167,7 @@ const Nav = ({ about }) => {
         ? ""
         : isCategoryIndexRoute
           ? "site-nav-line-category"
-          : isProjectRoute
-            ? "site-nav-line-project"
-            : "";
+          : "";
     const navThemeClass = isLanding
         ? "site-nav-landing site-nav-dark"
         : isArchive
@@ -182,11 +180,12 @@ const Nav = ({ about }) => {
           : "";
     const showFixedContactLinks = !isProjectRoute && !aboutVisible;
     const usesAboutColors = isLanding ? aboutColor : aboutNavActive;
+    const plusReturning = aboutVisible && !aboutOpen;
 
     return (
         <>
             <nav
-                className={`container ${isLanding ? "" : "site-nav-fixed"} ${navLineClass} ${navThemeClass} ${navRouteClass} ${usesAboutColors ? "nav-about-colors" : ""}`}
+                className={`container ${navLineClass} ${navThemeClass} ${navRouteClass} ${usesAboutColors ? "nav-about-colors" : ""}`}
                 ref={navRef}
             >
                 {isProjectRoute ? (
@@ -254,7 +253,7 @@ const Nav = ({ about }) => {
 
                     <button
                         aria-label="Open more information"
-                        className={`nav-plus ${plusHidden ? "nav-plus-hidden" : ""} ${aboutVisible ? "nav-plus-disabled" : ""}`}
+                        className={`nav-plus ${plusHidden ? "nav-plus-hidden" : ""} ${plusReturning ? "nav-plus-returning" : ""} ${aboutVisible ? "nav-plus-disabled" : ""}`}
                         onClick={handleOpenAbout}
                         type="button"
                     >
