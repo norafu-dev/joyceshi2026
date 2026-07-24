@@ -267,7 +267,14 @@ body:has(.project-password-page) {
 
 .category-page {
   display: flex;
-  min-height: calc(100vh - 24px);
+  min-height: 0;
+  flex: 1 0 auto;
+  flex-direction: column;
+}
+
+body:has(.category-page) {
+  display: flex;
+  min-height: 100dvh;
   flex-direction: column;
 }
 
