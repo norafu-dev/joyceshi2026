@@ -54,6 +54,7 @@ export function AnimatedProjectMedia({
   title = "",
   priority = false,
   sequenceIndex,
+  zoomOnHover = false,
 }) {
   const videoUrl = media?.video?.file?.asset?.url;
   const posterUrl = media?.video?.thumbnail?.asset?.url;
@@ -73,7 +74,7 @@ export function AnimatedProjectMedia({
         sequenceIndex={sequenceIndex}
         src={videoUrl}
         style={{ aspectRatio: formatAspectRatio(media.video.aspectRatio) }}
-        videoClassName="block h-auto w-full object-cover"
+        videoClassName={`block h-auto w-full object-cover${zoomOnHover ? " transition-all duration-300 ease-linear sm:group-hover:scale-105" : ""}`}
       >
         Your browser does not support the video tag.
       </AnimatedVideo>
@@ -86,7 +87,7 @@ export function AnimatedProjectMedia({
         alt={image.alt || title}
         blurDataURL={image.asset?.metadata?.lqip}
         height={dimensions?.height || 1}
-        imageClassName="block h-auto w-full"
+        imageClassName={`block h-auto w-full${zoomOnHover ? " transition-all duration-300 ease-linear sm:group-hover:scale-105" : ""}`}
         placeholder={image.asset?.metadata?.lqip ? "blur" : "empty"}
         preload={priority}
         quality={100}

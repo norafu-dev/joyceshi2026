@@ -35,7 +35,6 @@ const Nav = ({ about }) => {
     const [plusHidden, setPlusHidden] = useState(false);
     const navRef = useRef(null);
     const navActiveTimerRef = useRef(null);
-    const navColorTimerRef = useRef(null);
 
     const clearNavActiveTimer = useCallback(() => {
         if (!navActiveTimerRef.current) {
@@ -46,24 +45,14 @@ const Nav = ({ about }) => {
         navActiveTimerRef.current = null;
     }, []);
 
-    const clearNavColorTimer = useCallback(() => {
-        if (!navColorTimerRef.current) {
-            return;
-        }
-
-        window.clearTimeout(navColorTimerRef.current);
-        navColorTimerRef.current = null;
-    }, []);
-
     const handleOpenAbout = useCallback(() => {
         clearNavActiveTimer();
-        clearNavColorTimer();
         setPlusHidden(true);
         setAboutNavActive(true);
         setAboutColor(pathname === "/");
         setAboutVisible(true);
         setAboutOpen(true);
-    }, [clearNavActiveTimer, clearNavColorTimer, pathname]);
+    }, [clearNavActiveTimer, pathname]);
 
     const handleCloseAbout = useCallback(() => {
         if (!aboutVisible && !aboutOpen && !aboutNavActive && !aboutColor && !plusHidden) {
@@ -71,7 +60,6 @@ const Nav = ({ about }) => {
         }
 
         clearNavActiveTimer();
-        clearNavColorTimer();
         setPlusHidden(false);
         setAboutOpen(false);
 
@@ -80,32 +68,21 @@ const Nav = ({ about }) => {
             navActiveTimerRef.current = null;
         }, NAV_COLOR_CLOSE_DELAY);
 
-        if (aboutColor) {
-            navColorTimerRef.current = window.setTimeout(() => {
-                setAboutColor(false);
-                navColorTimerRef.current = null;
-            }, NAV_COLOR_CLOSE_DELAY);
-            return;
-        }
-
-        setAboutColor(false);
-    }, [aboutColor, aboutNavActive, aboutOpen, aboutVisible, clearNavActiveTimer, clearNavColorTimer, plusHidden]);
+    }, [aboutColor, aboutNavActive, aboutOpen, aboutVisible, clearNavActiveTimer, plusHidden]);
 
     const handleAboutExited = useCallback(() => {
         clearNavActiveTimer();
-        clearNavColorTimer();
         setAboutVisible(false);
         setAboutNavActive(false);
         setAboutColor(false);
         setPlusHidden(false);
-    }, [clearNavActiveTimer, clearNavColorTimer]);
+    }, [clearNavActiveTimer]);
 
     useEffect(() => {
         return () => {
             clearNavActiveTimer();
-            clearNavColorTimer();
         };
-    }, [clearNavActiveTimer, clearNavColorTimer]);
+    }, [clearNavActiveTimer]);
 
     useEffect(() => {
         const nav = navRef.current;
@@ -163,11 +140,6 @@ const Nav = ({ about }) => {
     const isCategoryRoute = categories.some(({ value }) => value === activeCategory);
     const isCategoryIndexRoute = isCategoryRoute && pathSegments.length === 1;
     const isProjectRoute = isCategoryRoute && pathSegments.length === 2;
-    const navLineClass = aboutVisible
-        ? ""
-        : isCategoryIndexRoute
-          ? "site-nav-line-category"
-          : "";
     const navThemeClass = isLanding
         ? "site-nav-landing site-nav-dark"
         : isArchive
@@ -178,14 +150,14 @@ const Nav = ({ about }) => {
         : isCategoryIndexRoute
           ? "site-nav-category"
           : "";
-    const showFixedContactLinks = !isProjectRoute && !aboutVisible;
+    const showFixedContactLinks = !isProjectRoute;
     const usesAboutColors = isLanding ? aboutColor : aboutNavActive;
     const plusReturning = aboutVisible && !aboutOpen;
 
     return (
         <>
             <nav
-                className={`container ${navLineClass} ${navThemeClass} ${navRouteClass} ${usesAboutColors ? "nav-about-colors" : ""}`}
+                className={`container ${navThemeClass} ${navRouteClass} ${usesAboutColors ? "nav-about-colors" : ""}`}
                 ref={navRef}
             >
                 {isProjectRoute ? (

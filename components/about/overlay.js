@@ -5,7 +5,6 @@ import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import gsap from "gsap";
 import BackToTopIcon from "@/components/back-to-top-icon";
-import NavContactLinks from "@/components/nav/contact-links";
 import { datedSections, DatedSection, TextSection } from "./sections";
 import { portableTextComponents } from "./portable-text";
 
@@ -137,12 +136,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
         </nav>
 
         <aside className="about-scroll col-start-18 col-span-7 row-start-1 h-full overflow-y-auto overscroll-y-contain pb-4">
-          <nav
-            aria-label="Contact links"
-            className="about-desktop-contact-nav"
-          >
-            <NavContactLinks layout="sidebar" />
-          </nav>
+          <div aria-hidden="true" className="about-desktop-contact-spacer" />
 
           {datedSections.map((section) => (
             <DatedSection

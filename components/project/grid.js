@@ -24,7 +24,7 @@ export default function ProjectGrid({ category, projects = [] }) {
                 >
                   <Link
                     aria-label={project.title || "View project"}
-                    className="block"
+                    className="group block"
                     href={`/${category}/${project.slug}`}
                   >
                     <AnimatedProjectMedia
@@ -32,6 +32,7 @@ export default function ProjectGrid({ category, projects = [] }) {
                       priority={rowIndex === 0}
                       sequenceIndex={rowIndex * 2 + columnIndex}
                       title={project.title}
+                      zoomOnHover
                     />
                   </Link>
                 </article>

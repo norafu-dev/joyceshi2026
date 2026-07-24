@@ -51,6 +51,14 @@ body:not(:has([data-ui="NextStudioLayout"])) :where(h1, h2, h3, h4, h5, h6, b, s
   font-weight: 400 !important;
 }
 
+body:not(:has([data-ui="NextStudioLayout"])) :where(a, button):not(:disabled):not(.nav-plus):not(.project-password-submit) {
+  transition: color 180ms ease;
+}
+
+body:not(:has([data-ui="NextStudioLayout"])) :where(a, button):not(:disabled):not(.nav-plus):not(.project-password-submit):hover {
+  color: var(--color-purple);
+}
+
 body>nav {
   position: relative;
   z-index: 20;
@@ -88,25 +96,16 @@ body>nav.site-nav-fixed>* {
   pointer-events: auto;
 }
 
-body>nav.site-nav-line-category::before,
-body>nav.site-nav-line-project::before {
+body:has(>nav.site-nav-category)::after {
   content: "";
-  position: absolute;
+  position: fixed;
+  z-index: 0;
   top: 0;
   bottom: 0;
-  width: 0;
-  border-left: 1px solid;
-  pointer-events: none;
-}
-
-body>nav.site-nav-line-category::before {
   left: 50%;
-  border-color: var(--color-gray);
-}
-
-body>nav.site-nav-line-project::before {
-  left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 - 10px);
-  border-color: #000000;
+  width: 0;
+  border-left: 1px solid var(--color-gray);
+  pointer-events: none;
 }
 
 body:has(.about-page)>nav.site-nav-fixed::before {
@@ -244,6 +243,10 @@ body:has(.about-page) {
   overflow: hidden;
 }
 
+body:has(.project-password-page) {
+  background: #f5f5f5;
+}
+
 .container {
   display: grid;
   width: 100%;
@@ -290,11 +293,6 @@ body:has(.about-page) {
   left: 50%;
   border-left: 1px solid var(--color-gray);
   pointer-events: none;
-}
-
-body:has(.about-page) .category-project-grid::before,
-body:has(.about-page) .project-page::before {
-  opacity: 0;
 }
 
 .category-project-row {
@@ -361,7 +359,8 @@ body:has(.about-page) .project-page::before {
 
 .project-detail-gallery {
   display: flex;
-  width: calc(((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 - 10px);
+  width: calc(((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 + 2px);
+  margin-left: -12px;
   flex-direction: column;
   gap: 3px;
   background: #ffffff;
@@ -644,28 +643,8 @@ body:has(.about-page) .project-page::before {
   display: none;
 }
 
-.about-desktop-contact-nav {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 4px;
-  padding-bottom: 90px;
-  color: #000000;
-}
-
-.about-desktop-contact-nav> :first-child {
-  display: flex;
-  grid-column: 1 / span 2;
-  flex-direction: column;
-}
-
-.about-desktop-contact-nav> :last-child {
-  display: flex;
-  grid-column: 3 / span 5;
-  flex-direction: column;
-}
-
-.about-desktop-contact-nav a {
-  color: #000000;
+.about-desktop-contact-spacer {
+  height: calc(2.4em + 90px);
 }
 
 .about-mobile-scroll::-webkit-scrollbar {
@@ -983,7 +962,7 @@ body:has(.about-page) .project-page::before {
   }
 
   .project-detail-page .project-detail-gallery {
-    width: 100%;
+    width: calc(100% + 24px);
   }
 
   .project-detail-page .project-detail-row {
@@ -1025,7 +1004,7 @@ body:has(.about-page) .project-page::before {
     pointer-events: auto;
   }
 
-  body>nav.site-nav-category::before {
+  body:has(>nav.site-nav-category)::after {
     display: none;
   }
 
