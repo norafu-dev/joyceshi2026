@@ -212,25 +212,26 @@ const Nav = ({ about }) => {
                             {categories[1].label}
                         </CategoryLink>
                         <span className="text-gray">&nbsp;and&nbsp;</span>
-                        <CategoryLink
-                            active={!usesAboutColors && activeCategory === categories[2].value}
-                            href={categories[2].href}
-                            muted={usesAboutColors}
-                            onNavigate={handleCloseAbout}
-                        >
-                            {categories[2].label}
-                        </CategoryLink>
-                        <span className="text-gray">.</span>
+                        <span className="nav-ending">
+                            <CategoryLink
+                                active={!usesAboutColors && activeCategory === categories[2].value}
+                                href={categories[2].href}
+                                muted={usesAboutColors}
+                                onNavigate={handleCloseAbout}
+                            >
+                                {categories[2].label}
+                            </CategoryLink>
+                            <span className="text-gray">.</span>
+                            <button
+                                aria-label="Open more information"
+                                className={`nav-plus ${plusHidden ? "nav-plus-hidden" : ""} ${plusReturning ? "nav-plus-returning" : ""} ${aboutVisible ? "nav-plus-disabled" : ""}`}
+                                onClick={handleOpenAbout}
+                                type="button"
+                            >
+                                <span className="sr-only">Open more information</span>
+                            </button>
+                        </span>
                     </span>
-
-                    <button
-                        aria-label="Open more information"
-                        className={`nav-plus ${plusHidden ? "nav-plus-hidden" : ""} ${plusReturning ? "nav-plus-returning" : ""} ${aboutVisible ? "nav-plus-disabled" : ""}`}
-                        onClick={handleOpenAbout}
-                        type="button"
-                    >
-                        <span className="sr-only">Open more information</span>
-                    </button>
                 </div>
 
                 {showFixedContactLinks ? (

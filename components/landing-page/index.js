@@ -36,60 +36,131 @@ export default function LandingPage({ projects = [] }) {
     [projects]
   );
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [incomingIndex, setIncomingIndex] = useState(null);
   const animationRef = useRef(null);
-  const currentLayerRef = useRef(null);
-  const incomingLayerRef = useRef(null);
+  const autoTimerRef = useRef(null);
+  const currentIndexRef = useRef(0);
   const isAnimating = useRef(false);
   const lastWheelAt = useRef(0);
+  const layerRefs = useRef([]);
+  const pendingImageCleanupRef = useRef(null);
+  const pendingIndexRef = useRef(null);
   const visibleIndex = slides.length ? currentIndex % slides.length : 0;
-  const incomingVisibleIndex =
-    incomingIndex === null || !slides.length ? null : incomingIndex % slides.length;
   const currentSlide = slides[visibleIndex];
-  const incomingSlide =
-    incomingVisibleIndex === null ? null : slides[incomingVisibleIndex];
+
+  const clearAutoTimer = useCallback(() => {
+    if (autoTimerRef.current === null) {
+      return;
+    }
+
+    window.clearTimeout(autoTimerRef.current);
+    autoTimerRef.current = null;
+  }, []);
+
+  const startTransition = useCallback((nextIndex) => {
+    const previousIndex = currentIndexRef.current;
+    const currentLayer = layerRefs.current[previousIndex];
+    const incomingLayer = layerRefs.current[nextIndex];
+
+    pendingImageCleanupRef.current?.();
+    pendingImageCleanupRef.current = null;
+    pendingIndexRef.current = null;
+
+    if (!currentLayer || !incomingLayer) {
+      currentIndexRef.current = nextIndex;
+      setCurrentIndex(nextIndex);
+      isAnimating.current = false;
+      return;
+    }
+
+    animationRef.current?.kill();
+    gsap.set(incomingLayer, { opacity: 0, zIndex: 1 });
+    gsap.set(currentLayer, { opacity: 1, zIndex: 0 });
+
+    animationRef.current = gsap
+      .timeline({
+        defaults: {
+          duration: 0.55,
+          ease: "power1.inOut",
+        },
+        onComplete: () => {
+          gsap.set(currentLayer, { opacity: 0, zIndex: 0 });
+          gsap.set(incomingLayer, { opacity: 1, zIndex: 0 });
+          currentIndexRef.current = nextIndex;
+          setCurrentIndex(nextIndex);
+          isAnimating.current = false;
+        },
+      })
+      .to(incomingLayer, { opacity: 1 }, 0)
+      .to(currentLayer, { opacity: 0 }, 0);
+  }, []);
+
+  const prepareTransition = useCallback(
+    (nextIndex) => {
+      const incomingLayer = layerRefs.current[nextIndex];
+
+      if (!incomingLayer) {
+        startTransition(nextIndex);
+        return;
+      }
+
+      const images = Array.from(incomingLayer.querySelectorAll("img"));
+      const incomingImage =
+        images.find((image) => window.getComputedStyle(image).display !== "none") ??
+        images[0];
+
+      if (!incomingImage) {
+        startTransition(nextIndex);
+        return;
+      }
+
+      const startAfterDecode = () => {
+        const decode =
+          typeof incomingImage.decode === "function"
+            ? incomingImage.decode().catch(() => {})
+            : Promise.resolve();
+
+        decode.then(() => {
+          if (pendingIndexRef.current === nextIndex) {
+            startTransition(nextIndex);
+          }
+        });
+      };
+
+      if (incomingImage.complete && incomingImage.naturalWidth > 0) {
+        startAfterDecode();
+        return;
+      }
+
+      const handleLoad = () => startAfterDecode();
+      const handleError = () => {
+        pendingImageCleanupRef.current?.();
+        pendingImageCleanupRef.current = null;
+        pendingIndexRef.current = null;
+        isAnimating.current = false;
+      };
+
+      incomingImage.addEventListener("load", handleLoad, { once: true });
+      incomingImage.addEventListener("error", handleError, { once: true });
+      pendingImageCleanupRef.current = () => {
+        incomingImage.removeEventListener("load", handleLoad);
+        incomingImage.removeEventListener("error", handleError);
+      };
+    },
+    [startTransition],
+  );
 
   const showNextSlide = useCallback(() => {
     if (slides.length <= 1 || isAnimating.current) {
       return;
     }
 
-    const nextIndex = (visibleIndex + 1) % slides.length;
+    const nextIndex = (currentIndexRef.current + 1) % slides.length;
 
+    clearAutoTimer();
     isAnimating.current = true;
-    animationRef.current?.kill();
-    setIncomingIndex(nextIndex);
-
-    requestAnimationFrame(() => {
-      const currentLayer = currentLayerRef.current;
-      const incomingLayer = incomingLayerRef.current;
-
-      if (!currentLayer || !incomingLayer) {
-        setCurrentIndex(nextIndex);
-        setIncomingIndex(null);
-        isAnimating.current = false;
-        return;
-      }
-
-      gsap.set(incomingLayer, { opacity: 0 });
-
-      animationRef.current = gsap
-        .timeline({
-          defaults: {
-            duration: 0.35,
-            ease: "power1.out",
-          },
-          onComplete: () => {
-            gsap.set(currentLayer, { opacity: 1 });
-            setCurrentIndex(nextIndex);
-            setIncomingIndex(null);
-            isAnimating.current = false;
-          },
-        })
-        .to(incomingLayer, { opacity: 1 }, 0)
-        .to(currentLayer, { opacity: 0.85, duration: 0.2 }, 0);
-    });
-  }, [slides.length, visibleIndex]);
+    pendingIndexRef.current = nextIndex;
+    prepareTransition(nextIndex);
+  }, [clearAutoTimer, prepareTransition, slides.length]);
 
   const handleWheel = (event) => {
     if (slides.length <= 1 || Math.abs(event.deltaY) < 20) {
@@ -107,20 +178,26 @@ export default function LandingPage({ projects = [] }) {
   };
 
   useEffect(() => {
+    clearAutoTimer();
+
     if (slides.length <= 1) {
       return;
     }
 
-    const timer = window.setTimeout(showNextSlide, 6000);
+    autoTimerRef.current = window.setTimeout(showNextSlide, 6000);
 
-    return () => window.clearTimeout(timer);
-  }, [currentIndex, showNextSlide, slides.length]);
+    return clearAutoTimer;
+  }, [clearAutoTimer, currentIndex, showNextSlide, slides.length]);
 
   useEffect(() => {
     return () => {
       animationRef.current?.kill();
+      clearAutoTimer();
+      pendingImageCleanupRef.current?.();
+      pendingImageCleanupRef.current = null;
+      pendingIndexRef.current = null;
     };
-  }, []);
+  }, [clearAutoTimer]);
 
   if (!currentSlide) {
     return (
@@ -137,21 +214,26 @@ export default function LandingPage({ projects = [] }) {
       onWheel={handleWheel}
       style={{ backgroundColor: "#000000" }}
     >
-      <div ref={currentLayerRef} className="absolute inset-0 opacity-100">
-        <LandingSlide slide={currentSlide} preload={visibleIndex === 0} />
-      </div>
-
-      {incomingSlide ? (
-        <div ref={incomingLayerRef} className="absolute inset-0 opacity-0">
-          <LandingSlide slide={incomingSlide} preload={false} />
+      {slides.map((slide, index) => (
+        <div
+          aria-hidden={index !== visibleIndex}
+          className={`landing-slide-layer absolute inset-0 ${
+            index === 0 ? "opacity-100" : "opacity-0"
+          }`}
+          key={slide.id}
+          ref={(node) => {
+            layerRefs.current[index] = node;
+          }}
+        >
+          <LandingSlide preload={index === 0} slide={slide} />
         </div>
-      ) : null}
+      ))}
 
       {slides.length > 1 ? (
         <button
           type="button"
           aria-label="View next project"
-          className="absolute inset-0 z-10"
+          className="landing-advance absolute inset-0 z-10"
           onClick={showNextSlide}
         />
       ) : null}

@@ -148,16 +148,21 @@ body>nav.nav-about-colors .text-gray {
   display: inline-block;
   width: 15px;
   height: 15px;
-  margin-left: 6px;
+  margin-left: 4px;
   padding: 0;
   border: 0;
   background: transparent;
   color: inherit;
   cursor: pointer;
   line-height: 1;
-  vertical-align: -3px;
+  vertical-align: middle;
   position: relative;
+  transform: translateY(-1px);
   transition: color 180ms ease;
+}
+
+.nav-ending {
+  white-space: nowrap;
 }
 
 .nav-plus::before,
@@ -259,6 +264,15 @@ body:has(.project-password-page) {
   width: auto;
 }
 
+.landing-slide-layer {
+  pointer-events: none;
+}
+
+.landing-advance {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 @media (min-width: 62.5rem) {
   .container {
     grid-template-columns: repeat(24, minmax(0, 1fr));
@@ -324,6 +338,18 @@ body:has(.category-page) {
   text-align: center;
   transform: translate(-50%, -50%);
   visibility: visible;
+}
+
+.archive-grid {
+  display: contents;
+}
+
+.archive-item {
+  margin-bottom: 90px;
+}
+
+.archive-page>.site-footer {
+  margin-top: 200px;
 }
 
 .project-page {
@@ -764,6 +790,54 @@ body:has(.category-page) {
 }
 
 @media (max-width: 62.499rem) {
+  body:has(>nav.site-nav-archive) {
+    --project-media-nav-gap: 90px;
+  }
+
+  body>nav.site-nav-archive {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: auto;
+    margin: -12px -12px 0;
+    padding: 12px 12px 90px;
+    pointer-events: auto;
+  }
+
+  .archive-page {
+    display: flex;
+    min-height: calc(100dvh - 24px);
+    flex-direction: column;
+    padding-top: 0;
+  }
+
+  .archive-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 4px;
+    row-gap: 0;
+  }
+
+  .archive-item {
+    grid-column: 2 / span 10;
+    margin-bottom: 60px;
+  }
+
+  .archive-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .archive-page>.site-footer {
+    margin-top: 0;
+    padding-top: 100px;
+  }
+
+  .archive-page .site-footer-mobile-contact {
+    border-bottom-color: #ffffff;
+  }
+
   body:has(>nav.site-nav-project):not(:has(.about-page)) {
     overflow: auto;
   }
