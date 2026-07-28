@@ -38,6 +38,7 @@ export default async function ArchivePage() {
       </AnimatedImageSequence>
 
       <SiteFooter
+        mobileSecondaryLabel="Return"
         secondaryHref="/"
         secondaryLabel="Return to work"
         topHref="#archive-top"

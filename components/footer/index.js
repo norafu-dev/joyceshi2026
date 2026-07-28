@@ -7,6 +7,7 @@ export default function SiteFooter({
   mobileBuyHref,
   mobileNextHref,
   mobileNextTitle,
+  mobileSecondaryLabel,
   scrollContainerSelector,
   secondaryHref = "/archive",
   secondaryLabel = "Archive",
@@ -92,7 +93,7 @@ export default function SiteFooter({
             </span>
           ) : (
             <Link className="justify-self-end underline" href={secondaryHref}>
-              {secondaryLabel}
+              {mobileSecondaryLabel || secondaryLabel}
             </Link>
           )}
         </div>

@@ -55,7 +55,7 @@ body:not(:has([data-ui="NextStudioLayout"])) :where(a, button):not(:disabled):no
   transition: color 180ms ease;
 }
 
-body:not(:has([data-ui="NextStudioLayout"])) :where(a, button):not(:disabled):not(.nav-plus):not(.project-password-submit):hover {
+body:not(:has([data-ui="NextStudioLayout"])) :where(a, button):not(:disabled):not(.nav-plus):not(.project-password-submit):not(.project-mobile-read-more):hover {
   color: var(--color-purple);
 }
 
@@ -1263,6 +1263,26 @@ body:has(.category-page) {
 
   .site-footer-mobile-actions> :last-child {
     grid-column: 10 / span 3;
+  }
+}
+
+@media (max-width: 42.499rem) {
+  body:has(.site-footer-mobile) {
+    padding-bottom: 0;
+  }
+
+  .project-detail-page .project-page-gallery {
+    display: flex;
+    min-height: calc(100dvh - 12px - var(--site-nav-height));
+    flex-direction: column;
+  }
+
+  .project-detail-page .project-page-gallery > .site-footer {
+    margin-top: auto;
+  }
+
+  .site-footer-mobile {
+    padding-bottom: 0;
   }
 }
 
