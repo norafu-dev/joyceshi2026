@@ -97,17 +97,17 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
 
   return (
     <div
-      className="about-page fixed inset-0 z-30 overflow-hidden bg-white p-0 text-gray desktop:z-10 desktop:p-3"
+      className="about-page fixed inset-0 z-30 overflow-hidden bg-white p-0 text-gray tablet:z-10 tablet:p-3"
       ref={overlayRef}
     >
       <div
         aria-hidden="true"
-        className="about-divider hidden desktop:block"
+        className="about-divider hidden tablet:block"
         ref={lineRef}
       />
 
-      <div className="about-page-content container hidden h-full min-h-0 overflow-hidden desktop:grid">
-        <section className="col-start-1 col-span-12 row-start-1 flex h-full flex-col pt-[calc(var(--site-nav-height)+24px)]">
+      <div className="about-page-content container hidden h-full min-h-0 overflow-hidden tablet:grid">
+        <section className="col-start-1 col-span-11 row-start-1 flex h-full flex-col pt-[calc(var(--site-nav-height)+24px)] desktop:col-span-12">
           <div>
             {about?.bio ? (
               <PortableText
@@ -124,7 +124,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
             href="/"
             onClick={onClose}
           >
-            Return to work
+            Return
           </Link>
           <Link
             className="pointer-events-auto col-start-4 text-black underline"
@@ -135,7 +135,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
           </Link>
         </nav>
 
-        <aside className="about-scroll col-start-18 col-span-7 row-start-1 h-full overflow-y-auto overscroll-y-contain pb-4">
+        <aside className="about-scroll col-start-14 col-span-7 row-start-1 h-full overflow-y-auto overscroll-y-contain pb-4 tablet:col-span-11 desktop:col-start-18 desktop:col-span-7">
           <div aria-hidden="true" className="about-desktop-contact-spacer" />
 
           {datedSections.map((section) => (
@@ -154,7 +154,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
       </div>
 
       <div
-        className="about-mobile-scroll h-full overflow-y-auto desktop:hidden"
+        className="about-mobile-scroll h-full overflow-y-auto tablet:hidden"
         ref={mobileScrollRef}
       >
         <section className="about-mobile-intro">

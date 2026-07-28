@@ -180,7 +180,7 @@ const Nav = ({ about }) => {
                     </div>
                 ) : null}
 
-                <div className={`col-span-12 ${isProjectRoute ? "hidden desktop:block" : ""}`}>
+                <div className={`col-span-12 tablet:col-span-11 desktop:col-span-12 ${isProjectRoute ? "hidden desktop:block" : ""}`}>
                     <button
                         className={`cursor-pointer border-0 bg-transparent p-0 text-left text-inherit [font:inherit] ${usesAboutColors ? "text-purple" : ""}`}
                         onClick={handleJoyceClick}
@@ -235,7 +235,7 @@ const Nav = ({ about }) => {
                 </div>
 
                 {showFixedContactLinks ? (
-                    <div className="hidden desktop:contents">
+                    <div className="hidden tablet:contents">
                         <NavContactLinks />
                     </div>
                 ) : null}

@@ -317,7 +317,7 @@ function ResponsiveLandingImage({
 function LandingCaption({ category, current, onNext, slug, title, total }) {
   return (
     <div className="landing-caption container pointer-events-none absolute inset-x-3 bottom-3 z-20 text-white">
-      <div className="col-span-10 desktop:col-span-12">
+      <div className="col-span-10 tablet:col-span-11 desktop:col-span-12">
         {category && slug ? (
           <Link
             className="pointer-events-auto"
@@ -332,7 +332,7 @@ function LandingCaption({ category, current, onNext, slug, title, total }) {
 
       <button
         type="button"
-        className="pointer-events-auto col-start-11 col-span-2 justify-self-start text-left desktop:col-start-20 desktop:col-span-4"
+        className="pointer-events-auto col-start-11 col-span-2 justify-self-start text-left tablet:col-start-18 tablet:col-span-2 desktop:col-start-20 desktop:col-span-4"
         onClick={onNext}
       >
         {current}/{total}
