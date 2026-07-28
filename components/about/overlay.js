@@ -158,7 +158,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
         ref={mobileScrollRef}
       >
         <section className="about-mobile-intro">
-          <MobileAboutHeader onNavigate={onClose} />
+          <MobileAboutHeader onNavigate={onClose} open={open} />
 
           <div className="about-mobile-bio">
             {about?.bio ? (
@@ -215,7 +215,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
   );
 }
 
-function MobileAboutHeader({ onNavigate }) {
+function MobileAboutHeader({ onNavigate, open }) {
   return (
     <header className="about-mobile-header">
       <button
@@ -245,14 +245,20 @@ function MobileAboutHeader({ onNavigate }) {
         print & editorial design
       </Link>
       <span> and </span>
-      <Link
-        className="text-black underline"
-        href="/digital-design"
-        onClick={onNavigate}
-      >
-        digital design
-      </Link>
-      <span>.</span>
+      <span className="nav-ending">
+        <Link
+          className="text-black underline"
+          href="/digital-design"
+          onClick={onNavigate}
+        >
+          digital design
+        </Link>
+        <span>.</span>
+        <span
+          aria-hidden="true"
+          className={`nav-plus about-mobile-close-plus text-black ${open ? "" : "nav-plus-returning"}`}
+        />
+      </span>
     </header>
   );
 }

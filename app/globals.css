@@ -722,7 +722,7 @@ body:has(.category-page) {
 }
 
 .about-mobile-intro {
-  min-height: calc(100dvh - 44px);
+  min-height: 100dvh;
   padding: 12px;
 }
 
@@ -737,20 +737,47 @@ body:has(.category-page) {
   font: inherit;
 }
 
+.about-mobile-close-plus::before,
+.about-mobile-close-plus::after {
+  opacity: 0;
+}
+
+.about-mobile-close-plus::after {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.about-mobile-close-plus.nav-plus-returning::before {
+  animation: about-mobile-plus-appear 260ms ease-out forwards;
+}
+
+.about-mobile-close-plus.nav-plus-returning::after {
+  animation:
+    nav-plus-line-rotate-back 900ms cubic-bezier(0.4, 0, 0.2, 1) forwards,
+    about-mobile-plus-appear 260ms ease-out forwards;
+}
+
+@keyframes about-mobile-plus-appear {
+  from {
+    opacity: 0.3;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .about-mobile-bio {
   margin-top: 12px;
 }
 
 .about-mobile-contact-nav {
-  position: sticky;
-  z-index: 4;
-  top: 0;
+  position: static;
   display: grid;
   min-height: 44px;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   align-items: center;
   column-gap: 4px;
-  padding: 0 12px;
+  padding: 12px;
   border-bottom: 1px solid #000000;
   background: #ffffff;
 }
@@ -772,7 +799,7 @@ body:has(.category-page) {
 }
 
 .about-mobile-details {
-  padding: 90px 12px 0;
+  padding: 110px 12px 0;
 }
 
 .about-mobile-details .about-info-row {
@@ -780,13 +807,18 @@ body:has(.category-page) {
 }
 
 .about-mobile-details .about-info-section {
-  margin-bottom: 90px;
+  margin-bottom: 110px;
+}
+
+.about-mobile-details .about-info-section:last-child {
+  margin-bottom: 0;
 }
 
 .about-mobile-details .about-info-heading {
   margin-right: -12px;
+  margin-bottom: 12px;
   margin-left: -12px;
-  padding: 0 12px 4px;
+  padding: 12px;
   border-bottom: 1px solid var(--color-gray);
 }
 
@@ -800,15 +832,16 @@ body:has(.category-page) {
 
 .about-mobile-footer {
   display: grid;
-  min-height: 50dvh;
+  min-height: 0;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   align-items: end;
   column-gap: 4px;
+  margin-top: 450px;
   padding: 0 12px 12px;
 }
 
 .about-mobile-footer> :nth-child(1) {
-  grid-column: 1 / span 3;
+  grid-column: 1 / span 4;
 }
 
 .about-mobile-footer> :nth-child(2) {
@@ -820,10 +853,13 @@ body:has(.category-page) {
 }
 
 .about-mobile-footer button {
+  display: inline-flex;
+  align-items: center;
   padding: 0;
   border: 0;
   background: transparent;
   font: inherit;
+  white-space: nowrap;
 }
 
 @media (max-width: 62.499rem) {

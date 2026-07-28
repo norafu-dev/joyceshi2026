@@ -17,6 +17,7 @@ export default function ProjectCounter({ total }) {
     }
 
     if (window.matchMedia("(max-width: 999px)").matches) {
+      const phoneMedia = window.matchMedia("(max-width: 42.499rem)");
       const projectCards = Array.from(
         grid.querySelectorAll(".category-project-card"),
       );
@@ -25,7 +26,7 @@ export default function ProjectCounter({ total }) {
         const counterAnchorTop =
           projectCards[0].getBoundingClientRect().bottom +
           window.scrollY +
-          14;
+          (phoneMedia.matches ? 20 : 14);
 
         counter.style.setProperty(
           "--category-project-counter-top",
