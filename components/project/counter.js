@@ -26,7 +26,7 @@ export default function ProjectCounter({ total }) {
         const counterAnchorTop =
           projectCards[0].getBoundingClientRect().bottom +
           window.scrollY +
-          (phoneMedia.matches ? 20 : 14);
+          (phoneMedia.matches ? 20 : 35);
 
         counter.style.setProperty(
           "--category-project-counter-top",

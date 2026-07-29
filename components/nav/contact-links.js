@@ -1,9 +1,10 @@
 export default function NavContactLinks({ layout = "site" }) {
   const isSidebar = layout === "sidebar";
+  const isAbout = layout === "about";
 
   return (
     <>
-      <div className={`${isSidebar ? "col-span-2" : "tablet:col-start-14 tablet:col-span-2 desktop:col-start-18 desktop:col-span-2"} flex flex-col`}>
+      <div className={`${isSidebar || isAbout ? "col-span-2" : "tablet:col-start-14 tablet:col-span-2 desktop:col-start-18 desktop:col-span-2"} flex flex-col`}>
         <a href="https://www.instagram.com/gloamaxis/?igshid=YmMyMTA2M2Y%3D" target="_blank" rel="noopener noreferrer">
           Instagram
         </a>
@@ -12,7 +13,7 @@ export default function NavContactLinks({ layout = "site" }) {
         </a>
       </div>
 
-      <div className={`${isSidebar ? "col-start-3 col-span-5" : "tablet:col-start-18 tablet:col-span-4 desktop:col-start-20 desktop:col-span-4"} flex flex-col`}>
+      <div className={`${isSidebar ? "col-start-3 col-span-5" : isAbout ? "col-start-5 col-span-4" : "tablet:col-start-18 tablet:col-span-4 desktop:col-start-20 desktop:col-span-4"} flex flex-col`}>
         <a href="mailto:joyceshidesign@gmail.com" target="_blank" rel="noopener noreferrer">
           joyceshidesign@gmail.com
         </a>

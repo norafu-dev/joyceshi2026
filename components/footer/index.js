@@ -40,7 +40,12 @@ export default function SiteFooter({
           aria-label="Contact links"
           className="site-footer-mobile-contact"
         >
-          <a href="mailto:joyceshidesign@gmail.com">email</a>
+          <a href="mailto:joyceshidesign@gmail.com">
+            <span className="tablet:hidden">email</span>
+            <span className="hidden tablet:inline">
+              joyceshidesign@gmail.com
+            </span>
+          </a>
           <a
             href="https://www.instagram.com/gloamaxis/?igshid=YmMyMTA2M2Y%3D"
             rel="noopener noreferrer"

@@ -161,7 +161,7 @@ const Nav = ({ about }) => {
                 ref={navRef}
             >
                 {isProjectRoute ? (
-                    <div className="project-mobile-nav col-span-12 desktop:hidden">
+                    <div className="project-mobile-nav col-span-12 tablet:hidden">
                         <button
                             className={`cursor-pointer border-0 bg-transparent p-0 text-left text-inherit [font:inherit] ${usesAboutColors ? "text-purple" : ""}`}
                             onClick={handleJoyceClick}
@@ -180,7 +180,7 @@ const Nav = ({ about }) => {
                     </div>
                 ) : null}
 
-                <div className={`col-span-12 tablet:col-span-11 desktop:col-span-12 ${isProjectRoute ? "hidden desktop:block" : ""}`}>
+                <div className={`col-span-12 tablet:col-span-11 desktop:col-span-12 ${isProjectRoute ? "hidden tablet:block" : ""}`}>
                     <button
                         className={`cursor-pointer border-0 bg-transparent p-0 text-left text-inherit [font:inherit] ${usesAboutColors ? "text-purple" : ""}`}
                         onClick={handleJoyceClick}
@@ -235,10 +235,14 @@ const Nav = ({ about }) => {
                 </div>
 
                 {showFixedContactLinks ? (
-                    <div className="hidden tablet:contents">
+                    <div className={aboutVisible ? "hidden desktop:contents" : "hidden tablet:contents"}>
                         <NavContactLinks />
                     </div>
-                ) : null}
+                ) : (
+                    <div className={aboutVisible ? "hidden" : "hidden tablet:contents desktop:hidden"}>
+                        <NavContactLinks />
+                    </div>
+                )}
             </nav>
             {aboutVisible ? (
                 <AboutOverlay
