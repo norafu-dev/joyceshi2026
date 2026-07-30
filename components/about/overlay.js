@@ -139,15 +139,10 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
         <aside className="about-scroll col-start-14 col-span-7 row-start-1 h-full overflow-y-auto overscroll-y-contain pb-4 tablet:col-span-11 desktop:col-start-18 desktop:col-span-7">
           <nav
             aria-label="Contact links"
-            className="about-scroll-contact grid grid-cols-11 gap-x-1 text-black desktop:hidden"
+            className="about-scroll-contact grid grid-cols-11 gap-x-1 text-black desktop:grid-cols-7"
           >
             <NavContactLinks layout="about" />
           </nav>
-
-          <div
-            aria-hidden="true"
-            className="about-desktop-contact-spacer hidden desktop:block"
-          />
 
           {datedSections.map((section) => (
             <DatedSection

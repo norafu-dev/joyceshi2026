@@ -695,7 +695,7 @@ body:has(.category-page) {
   }
 }
 
-@media (min-width: 42.5rem) and (max-width: 62.499rem) {
+@media (min-width: 42.5rem) {
   .about-scroll-contact {
     padding-bottom: 90px;
   }
@@ -1419,10 +1419,6 @@ body:has(.category-page) {
 }
 
 @media (min-width: 62.5rem) {
-  .about-desktop-contact-spacer {
-    height: calc(2.4em + 90px);
-  }
-
   .about-page-content>section {
     grid-column: 1 / span 12;
   }

@@ -235,7 +235,7 @@ const Nav = ({ about }) => {
                 </div>
 
                 {showFixedContactLinks ? (
-                    <div className={aboutVisible ? "hidden desktop:contents" : "hidden tablet:contents"}>
+                    <div className={aboutVisible ? "hidden" : "hidden tablet:contents"}>
                         <NavContactLinks />
                     </div>
                 ) : (
