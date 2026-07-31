@@ -241,7 +241,6 @@ export default function LandingPage({ projects = [] }) {
       <LandingCaption
         category={currentSlide.category}
         current={visibleIndex + 1}
-        onNext={showNextSlide}
         slug={currentSlide.slug}
         title={currentSlide.title}
         total={slides.length}
@@ -314,7 +313,7 @@ function ResponsiveLandingImage({
   );
 }
 
-function LandingCaption({ category, current, onNext, slug, title, total }) {
+function LandingCaption({ category, current, slug, title, total }) {
   return (
     <div className="landing-caption container pointer-events-none absolute inset-x-3 bottom-3 z-20 text-white">
       <div className="col-span-10 tablet:col-span-11 desktop:col-span-12">
@@ -330,13 +329,9 @@ function LandingCaption({ category, current, onNext, slug, title, total }) {
         )}
       </div>
 
-      <button
-        type="button"
-        className="pointer-events-auto col-start-11 col-span-2 justify-self-start text-left tablet:col-start-18 tablet:col-span-2 desktop:col-start-20 desktop:col-span-4"
-        onClick={onNext}
-      >
+      <span className="col-start-11 col-span-2 justify-self-start tablet:col-start-18 tablet:col-span-2 desktop:col-start-20 desktop:col-span-4">
         {current}/{total}
-      </button>
+      </span>
     </div>
   );
 }

@@ -104,7 +104,7 @@ export default function AboutOverlay({
 
   return (
     <div
-      className="about-page fixed inset-0 z-30 overflow-hidden bg-white p-0 text-gray tablet:z-10 tablet:p-3"
+      className="about-page fixed inset-0 z-30 overflow-hidden bg-white p-0 text-gray tablet:z-10 tablet:px-3 tablet:pt-3"
       ref={overlayRef}
     >
       <div
@@ -125,7 +125,7 @@ export default function AboutOverlay({
           </div>
         </section>
 
-        <nav className="container pointer-events-none col-start-1 col-span-24 row-start-1 self-end">
+        <nav className="container pointer-events-none col-start-1 col-span-24 row-start-1 self-end pb-3">
           <Link
             className="pointer-events-auto col-span-3 justify-self-start text-black underline"
             href="/"

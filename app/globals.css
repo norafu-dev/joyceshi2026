@@ -37,7 +37,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-untitled-serif);
   font-weight: 400;
-  padding: 12px;
+  padding: 12px 12px 0;
   font-size: 16px;
   line-height: 120%;
   letter-spacing: -0.002em;
@@ -425,7 +425,7 @@ body:has(.category-page) {
   z-index: 9;
   top: 12px;
   right: calc(12px - (100vw - 100%));
-  bottom: 12px;
+  bottom: 0;
   left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17);
   min-width: 0;
   background: #ffffff;
@@ -490,7 +490,7 @@ body:has(.category-page) {
   z-index: 2;
   top: auto;
   right: 12px;
-  bottom: 24px;
+  bottom: 30px;
   left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17);
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -667,6 +667,10 @@ body:has(.category-page) {
   display: none;
 }
 
+.about-page :where(.about-scroll, .about-mobile-contact-nav, .about-mobile-details) a {
+  text-decoration: none;
+}
+
 .about-mobile-scroll {
   scrollbar-width: none;
   overscroll-behavior-y: contain;
@@ -696,8 +700,18 @@ body:has(.category-page) {
 }
 
 @media (min-width: 42.5rem) {
+  .about-page-content>.about-scroll {
+    padding-top: calc(2.4em + 90px);
+  }
+
   .about-scroll-contact {
-    padding-bottom: 90px;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 12px;
+    left: calc(12px + ((100vw - 24px - 92px) / 24 + 4px) * 13);
+    padding-top: 12px;
+    background: transparent;
   }
 }
 
@@ -1086,6 +1100,10 @@ body:has(.category-page) {
     grid-column: 1 / span 2;
   }
 
+  .project-mobile-read-more> :first-child {
+    color: var(--color-gray);
+  }
+
   .project-mobile-read-more> :last-child,
   .project-mobile-information-row> :last-child {
     grid-column: 3 / span 10;
@@ -1299,10 +1317,6 @@ body:has(.category-page) {
 }
 
 @media (min-width: 42.5rem) and (max-width: 62.499rem) {
-  body:has(footer.site-footer-mobile) {
-    padding-bottom: 0;
-  }
-
   .archive-grid {
     grid-template-columns: repeat(24, minmax(0, 1fr));
   }
@@ -1455,6 +1469,10 @@ body:has(.category-page) {
 
   .about-page-content>.about-scroll {
     grid-column: 18 / span 7;
+  }
+
+  .about-scroll-contact {
+    left: calc(12px + ((100vw - 24px - 92px) / 24 + 4px) * 17);
   }
 
   .about-scroll .about-info-row {
