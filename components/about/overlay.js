@@ -9,7 +9,13 @@ import NavContactLinks from "@/components/nav/contact-links";
 import { datedSections, DatedSection, TextSection } from "./sections";
 import { portableTextComponents } from "./portable-text";
 
-export default function AboutOverlay({ about, open, onClose, onExited }) {
+export default function AboutOverlay({
+  about,
+  animateMobileClosePlus = true,
+  open,
+  onClose,
+  onExited,
+}) {
   const overlayRef = useRef(null);
   const lineRef = useRef(null);
   const mobileScrollRef = useRef(null);
@@ -164,7 +170,11 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
         ref={mobileScrollRef}
       >
         <section className="about-mobile-intro">
-          <MobileAboutHeader onNavigate={onClose} open={open} />
+          <MobileAboutHeader
+            animateClosePlus={animateMobileClosePlus}
+            onNavigate={onClose}
+            open={open}
+          />
 
           <div className="about-mobile-bio">
             {about?.bio ? (
@@ -221,7 +231,7 @@ export default function AboutOverlay({ about, open, onClose, onExited }) {
   );
 }
 
-function MobileAboutHeader({ onNavigate, open }) {
+function MobileAboutHeader({ animateClosePlus, onNavigate, open }) {
   return (
     <header className="about-mobile-header">
       <button
@@ -262,7 +272,7 @@ function MobileAboutHeader({ onNavigate, open }) {
         <span>.</span>
         <span
           aria-hidden="true"
-          className={`nav-plus about-mobile-close-plus text-black ${open ? "" : "nav-plus-returning"}`}
+          className={`nav-plus about-mobile-close-plus text-black ${!open && animateClosePlus ? "nav-plus-returning" : ""}`}
         />
       </span>
     </header>

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import AnimatedImage, { AnimatedVideo } from "@/components/animated-image";
+import ProjectDetailVideo from "./detail-video";
 
 const DEFAULT_VIDEO_ASPECT_RATIO = "16 / 9";
 
@@ -12,20 +13,13 @@ export default function ProjectMedia({ media, title = "", priority = false }) {
 
   if (videoUrl) {
     return (
-      <video
-        aria-label={title || "Project video"}
-        autoPlay
-        className="block h-auto w-full object-cover"
-        loop
-        muted
-        playsInline
+      <ProjectDetailVideo
+        aspectRatio={formatAspectRatio(media.video.aspectRatio)}
+        autoplay={Boolean(media.video.autoplay)}
         poster={posterUrl}
-        preload="metadata"
         src={videoUrl}
-        style={{ aspectRatio: formatAspectRatio(media.video.aspectRatio) }}
-      >
-        Your browser does not support the video tag.
-      </video>
+        title={title}
+      />
     );
   }
 

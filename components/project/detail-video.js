@@ -1,0 +1,80 @@
+"use client";
+
+import { useCallback, useRef, useState } from "react";
+
+export default function ProjectDetailVideo({
+  aspectRatio,
+  autoplay = false,
+  poster,
+  src,
+  title = "",
+}) {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePlayClick = useCallback(() => {
+    const playPromise = videoRef.current?.play();
+
+    playPromise?.catch(() => {
+      setIsPlaying(false);
+    });
+  }, []);
+
+  const handleVideoClick = useCallback(() => {
+    if (autoplay || !videoRef.current) {
+      return;
+    }
+
+    if (videoRef.current.paused) {
+      handlePlayClick();
+      return;
+    }
+
+    videoRef.current.pause();
+  }, [autoplay, handlePlayClick]);
+
+  return (
+    <div
+      className="relative w-full overflow-hidden"
+      style={{ aspectRatio }}
+    >
+      <video
+        aria-label={title || "Project video"}
+        autoPlay={autoplay}
+        className={`block h-full w-full object-cover ${autoplay ? "" : "cursor-pointer"}`}
+        loop
+        muted
+        onClick={handleVideoClick}
+        onPause={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+        playsInline
+        poster={poster}
+        preload={autoplay ? "auto" : "metadata"}
+        ref={videoRef}
+        src={src}
+      >
+        Your browser does not support the video tag.
+      </video>
+
+      {!autoplay && !isPlaying ? (
+        <button
+          aria-label={`Play ${title || "project video"}`}
+          className="absolute inset-0 flex cursor-pointer items-center justify-center"
+          onClick={handlePlayClick}
+          type="button"
+        >
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/70 text-white shadow-lg transition-all hover:scale-105 hover:bg-black/90 tablet:h-20 tablet:w-20 desktop:h-24 desktop:w-24">
+            <svg
+              aria-hidden="true"
+              className="ml-1 h-8 w-8 tablet:h-10 tablet:w-10 desktop:h-12 desktop:w-12"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </button>
+      ) : null}
+    </div>
+  );
+}

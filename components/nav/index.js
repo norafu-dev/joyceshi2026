@@ -247,6 +247,7 @@ const Nav = ({ about }) => {
             {aboutVisible ? (
                 <AboutOverlay
                     about={about}
+                    animateMobileClosePlus={!isProjectRoute}
                     onClose={handleCloseAbout}
                     onExited={handleAboutExited}
                     open={aboutOpen}
