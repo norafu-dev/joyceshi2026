@@ -72,6 +72,7 @@ const Nav = ({ about }) => {
 
         navActiveTimerRef.current = window.setTimeout(() => {
             setAboutNavActive(false);
+            setAboutColor(false);
             navActiveTimerRef.current = null;
         }, NAV_COLOR_CLOSE_DELAY);
 
@@ -157,7 +158,6 @@ const Nav = ({ about }) => {
         : isCategoryIndexRoute
           ? "site-nav-category"
           : "";
-    const showFixedContactLinks = !isProjectRoute;
     const usesAboutColors = isLanding ? aboutColor : aboutNavActive;
     const plusReturning = aboutVisible && !aboutOpen;
 
@@ -241,15 +241,9 @@ const Nav = ({ about }) => {
                     </span>
                 </div>
 
-                {showFixedContactLinks ? (
-                    <div className={aboutVisible ? "hidden" : "hidden tablet:contents"}>
-                        <NavContactLinks />
-                    </div>
-                ) : (
-                    <div className={aboutVisible ? "hidden" : "hidden tablet:contents desktop:hidden"}>
-                        <NavContactLinks />
-                    </div>
-                )}
+                <div className={isProjectRoute ? "hidden tablet:contents desktop:hidden" : "hidden tablet:contents"}>
+                    <NavContactLinks />
+                </div>
             </nav>
             {aboutVisible ? (
                 <AboutOverlay

@@ -124,9 +124,7 @@ export default function ProjectMobileDetails({
               <span>{project.year}</span>
               <span>
                 Read about the project
-                <span aria-hidden="true" className="project-mobile-read-more-plus">
-                  +
-                </span>
+                <span aria-hidden="true" className="nav-plus" />
               </span>
             </button>
           </div>

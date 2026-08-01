@@ -641,7 +641,7 @@ body:has(.category-page) {
 .project-password-return {
   position: fixed;
   right: 12px;
-  bottom: 24px;
+  bottom: 30px;
 }
 
 .about-page.container {
@@ -702,16 +702,6 @@ body:has(.category-page) {
 @media (min-width: 42.5rem) {
   .about-page-content>.about-scroll {
     padding-top: calc(2.4em + 90px);
-  }
-
-  .about-scroll-contact {
-    position: fixed;
-    z-index: 2;
-    top: 0;
-    right: 12px;
-    left: calc(12px + ((100vw - 24px - 92px) / 24 + 4px) * 13);
-    padding-top: 12px;
-    background: transparent;
   }
 }
 
@@ -1109,14 +1099,6 @@ body:has(.category-page) {
     grid-column: 3 / span 10;
   }
 
-  .project-mobile-read-more-plus {
-    display: inline-block;
-    margin-left: 4px;
-    font-size: 22px;
-    line-height: 0;
-    vertical-align: -1px;
-  }
-
   main.project-detail-page .project-mobile-information {
     padding: 30px 0 80px;
   }
@@ -1215,7 +1197,7 @@ body:has(.category-page) {
     grid-column: 1 / -1;
     margin: 0;
     padding: 0;
-    background: #ffffff;
+    background: transparent;
     color: var(--color-gray);
     line-height: 20px;
     pointer-events: none;
@@ -1468,16 +1450,37 @@ body:has(.category-page) {
 }
 
 @media (min-width: 62.5rem) {
+  body:has(.about-page)>main .project-sidebar {
+    z-index: 20;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  body:has(.about-page)>main .project-sidebar-inner {
+    overflow: visible;
+  }
+
+  body:has(.about-page)>main .project-sidebar-contact-nav {
+    position: fixed;
+    z-index: 1;
+    top: 12px;
+    right: 12px;
+    left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17);
+    padding-bottom: 0;
+    pointer-events: auto;
+  }
+
+  body:has(.about-page)>main .project-sidebar-content,
+  body:has(.about-page)>main .project-sidebar-actions {
+    visibility: hidden;
+  }
+
   .about-page-content>section {
     grid-column: 1 / span 12;
   }
 
   .about-page-content>.about-scroll {
     grid-column: 18 / span 7;
-  }
-
-  .about-scroll-contact {
-    left: calc(12px + ((100vw - 24px - 92px) / 24 + 4px) * 17);
   }
 
   .about-scroll .about-info-row {
@@ -1506,5 +1509,6 @@ body:has(.category-page) {
 
   .site-footer-desktop {
     display: grid;
+    padding-bottom: 12px;
   }
 }
