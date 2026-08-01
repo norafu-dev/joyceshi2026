@@ -252,7 +252,7 @@ function MobileAboutHeader({ animateClosePlus, onNavigate, open }) {
       >
         brand & campaign system
       </Link>
-      <span>, </span>
+      <span>,&nbsp;</span>
       <Link
         className="text-black underline"
         href="/print-editorial-design"
@@ -260,7 +260,7 @@ function MobileAboutHeader({ animateClosePlus, onNavigate, open }) {
       >
         print & editorial design
       </Link>
-      <span> and </span>
+      <span>&nbsp;and&nbsp;</span>
       <span className="nav-ending">
         <Link
           className="text-black underline"

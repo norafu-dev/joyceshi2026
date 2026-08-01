@@ -1281,6 +1281,11 @@ body:has(.category-page) {
 }
 
 @media (max-width: 42.499rem) {
+  body>nav.site-nav-dark:not(.nav-about-colors),
+  body>nav.site-nav-dark:not(.nav-about-colors) * {
+    transition-property: opacity !important;
+  }
+
   .nav-plus.nav-plus-hidden::before,
   .nav-plus.nav-plus-hidden::after,
   .nav-plus.nav-plus-returning::before,
@@ -1289,8 +1294,8 @@ body:has(.category-page) {
     will-change: opacity, transform;
   }
 
-  body:has(.about-page)>nav .nav-plus.nav-plus-returning::before,
-  body:has(.about-page)>nav .nav-plus.nav-plus-returning::after {
+  body:has(.about-page)>nav.site-nav-dark .nav-plus.nav-plus-returning::before,
+  body:has(.about-page)>nav.site-nav-dark .nav-plus.nav-plus-returning::after {
     animation: none;
     opacity: 0;
   }

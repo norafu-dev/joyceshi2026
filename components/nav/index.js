@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const NAV_COLOR_CLOSE_DELAY = 480;
+const MOBILE_MEDIA_QUERY = "(max-width: 42.499rem)";
 
 const categories = [
     {
@@ -62,6 +63,12 @@ const Nav = ({ about }) => {
         clearNavActiveTimer();
         setPlusHidden(false);
         setAboutOpen(false);
+
+        if (window.matchMedia(MOBILE_MEDIA_QUERY).matches) {
+            setAboutNavActive(false);
+            setAboutColor(false);
+            return;
+        }
 
         navActiveTimerRef.current = window.setTimeout(() => {
             setAboutNavActive(false);
