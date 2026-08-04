@@ -218,7 +218,7 @@ const Nav = ({ about }) => {
                         >
                             {categories[1].label}
                         </CategoryLink>
-                        <span className="text-gray">&nbsp;and&nbsp;</span>
+                        <span className="text-gray">&nbsp;and </span>
                         <span className="nav-ending">
                             <CategoryLink
                                 active={!usesAboutColors && activeCategory === categories[2].value}
@@ -244,6 +244,15 @@ const Nav = ({ about }) => {
                 <div className={isProjectRoute ? "hidden tablet:contents desktop:hidden" : "hidden tablet:contents"}>
                     <NavContactLinks />
                 </div>
+
+                {isProjectRoute && aboutVisible ? (
+                    <nav
+                        aria-label="Contact links"
+                        className="project-about-contact-nav hidden desktop:grid"
+                    >
+                        <NavContactLinks layout="sidebar" />
+                    </nav>
+                ) : null}
             </nav>
             {aboutVisible ? (
                 <AboutOverlay

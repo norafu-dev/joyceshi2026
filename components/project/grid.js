@@ -38,7 +38,7 @@ export default function ProjectGrid({ category, projects = [] }) {
                 </article>
 
                 {rowIndex === 0 && columnIndex === 0 ? (
-                  <ProjectCounter total={projects.length} />
+                  <ProjectCounter key={category} total={projects.length} />
                 ) : null}
               </Fragment>
             ))}

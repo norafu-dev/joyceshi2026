@@ -249,7 +249,7 @@ body:has(.about-page) {
 }
 
 body:has(.project-password-page) {
-  background: #f5f5f5;
+  background: #f5f5f5;  
 }
 
 .container {
@@ -443,7 +443,9 @@ body:has(.category-page) {
 
 .project-sidebar-contact-nav {
   display: grid;
+  box-sizing: content-box;
   flex: 0 0 auto;
+  height: var(--site-nav-height);
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
   padding-bottom: var(--project-media-nav-gap);
@@ -490,7 +492,7 @@ body:has(.category-page) {
   z-index: 2;
   top: auto;
   right: 12px;
-  bottom: 30px;
+  bottom: 12px;
   left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17);
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -641,7 +643,7 @@ body:has(.category-page) {
 .project-password-return {
   position: fixed;
   right: 12px;
-  bottom: 30px;
+  bottom: 12px;
 }
 
 .about-page.container {
@@ -672,6 +674,7 @@ body:has(.category-page) {
 }
 
 .about-mobile-scroll {
+  --about-mobile-contact-height: 44px;
   scrollbar-width: none;
   overscroll-behavior-y: contain;
 }
@@ -774,7 +777,7 @@ body:has(.category-page) {
 
 .about-mobile-contact-nav {
   display: grid;
-  min-height: 44px;
+  min-height: var(--about-mobile-contact-height);
   grid-template-columns: repeat(12, minmax(0, 1fr));
   align-items: center;
   column-gap: 4px;
@@ -818,10 +821,14 @@ body:has(.category-page) {
 }
 
 .about-mobile-details .about-info-heading {
+  position: sticky;
+  z-index: 1;
+  top: var(--about-mobile-contact-height);
   margin-right: -12px;
   margin-left: -12px;
-  padding: 0 12px 4px;
+  padding: 12px;
   border-bottom: 1px solid var(--color-gray);
+  background: #ffffff;
 }
 
 .about-mobile-details .about-info-year {
@@ -1263,6 +1270,7 @@ body:has(.category-page) {
 }
 
 @media (max-width: 42.499rem) {
+
   body>nav.site-nav-dark:not(.nav-about-colors),
   body>nav.site-nav-dark:not(.nav-about-colors) * {
     transition-property: opacity !important;
@@ -1450,29 +1458,24 @@ body:has(.category-page) {
 }
 
 @media (min-width: 62.5rem) {
-  body:has(.about-page)>main .project-sidebar {
-    z-index: 20;
-    background: transparent;
-    pointer-events: none;
+  .project-detail-page .project-page-gallery {
+    display: flex;
+    min-height: calc(100dvh - 12px - var(--site-nav-height));
+    flex-direction: column;
   }
 
-  body:has(.about-page)>main .project-sidebar-inner {
-    overflow: visible;
+  .project-detail-page .project-page-gallery>.site-footer {
+    margin-top: auto;
   }
 
-  body:has(.about-page)>main .project-sidebar-contact-nav {
+  .project-about-contact-nav {
     position: fixed;
     z-index: 1;
     top: 12px;
     right: 12px;
     left: calc(12px + ((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17);
-    padding-bottom: 0;
-    pointer-events: auto;
-  }
-
-  body:has(.about-page)>main .project-sidebar-content,
-  body:has(.about-page)>main .project-sidebar-actions {
-    visibility: hidden;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
   }
 
   .about-page-content>section {

@@ -20,19 +20,6 @@ export default function ProjectDetailVideo({
     });
   }, []);
 
-  const handleVideoClick = useCallback(() => {
-    if (autoplay || !videoRef.current) {
-      return;
-    }
-
-    if (videoRef.current.paused) {
-      handlePlayClick();
-      return;
-    }
-
-    videoRef.current.pause();
-  }, [autoplay, handlePlayClick]);
-
   return (
     <div
       className="relative w-full overflow-hidden"
@@ -41,10 +28,10 @@ export default function ProjectDetailVideo({
       <video
         aria-label={title || "Project video"}
         autoPlay={autoplay}
-        className={`block h-full w-full object-cover ${autoplay ? "" : "cursor-pointer"}`}
+        className="block h-full w-full object-cover"
+        controls={!autoplay && isPlaying}
         loop
-        muted
-        onClick={handleVideoClick}
+        muted={autoplay}
         onPause={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
         playsInline
@@ -59,7 +46,7 @@ export default function ProjectDetailVideo({
       {!autoplay && !isPlaying ? (
         <button
           aria-label={`Play ${title || "project video"}`}
-          className="absolute inset-0 flex cursor-pointer items-center justify-center"
+          className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer border-0 bg-transparent p-0"
           onClick={handlePlayClick}
           type="button"
         >

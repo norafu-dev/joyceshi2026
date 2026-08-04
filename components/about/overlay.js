@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import gsap from "gsap";
@@ -38,7 +38,7 @@ export default function AboutOverlay({
     };
   }, [onClose, open]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const overlay = overlayRef.current;
     const line = lineRef.current;
 
@@ -68,19 +68,12 @@ export default function AboutOverlay({
           0.12,
         );
     } else {
+      gsap.set(line, { autoAlpha: 1 });
+
       timelineRef.current = gsap
         .timeline({
           onComplete: onExited,
         })
-        .to(
-          line,
-          {
-            autoAlpha: 0,
-            duration: 0.75,
-            ease: "power2.out",
-          },
-          0,
-        )
         .to(overlay, {
           clipPath: "inset(0 0 100% 0)",
           duration: 0.95,

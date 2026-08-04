@@ -18,19 +18,53 @@ export default function ProjectCounter({ total }) {
 
     if (window.matchMedia("(max-width: 999px)").matches) {
       const phoneMedia = window.matchMedia("(max-width: 42.499rem)");
+      const siteNav = document.querySelector("body > nav");
       const projectCards = Array.from(
         grid.querySelectorAll(".category-project-card"),
       );
+      let disposed = false;
+
+      if (!projectCards.length) {
+        return undefined;
+      }
 
       const updateMobileCurrent = () => {
-        const counterAnchorTop =
+        const fixedCounterTop =
           projectCards[0].getBoundingClientRect().bottom +
           window.scrollY +
           (phoneMedia.matches ? 20 : 35);
+        const visualRows = [];
+
+        projectCards.forEach((projectCard) => {
+          const cardRect = projectCard.getBoundingClientRect();
+          const currentRow = visualRows.at(-1);
+
+          if (currentRow && Math.abs(currentRow.top - cardRect.top) < 2) {
+            currentRow.bottom = Math.max(currentRow.bottom, cardRect.bottom);
+            return;
+          }
+
+          visualRows.push({
+            top: cardRect.top,
+            bottom: cardRect.bottom,
+          });
+        });
+
+        let counterTop = fixedCounterTop;
+
+        if (visualRows.length > 1) {
+          const previousRow = visualRows.at(-2);
+          const lastRow = visualRows.at(-1);
+          const lastGapTop =
+            previousRow.bottom +
+            (lastRow.top - previousRow.bottom - counter.offsetHeight) / 2;
+
+          counterTop = Math.min(fixedCounterTop, lastGapTop);
+        }
 
         counter.style.setProperty(
           "--category-project-counter-top",
-          `${counterAnchorTop}px`,
+          `${counterTop}px`,
         );
         counter.style.visibility = "visible";
 
@@ -60,7 +94,7 @@ export default function ProjectCounter({ total }) {
         });
       };
 
-      scheduleMobileUpdate();
+      updateMobileCurrent();
       window.addEventListener("scroll", scheduleMobileUpdate, {
         passive: true,
       });
@@ -68,11 +102,21 @@ export default function ProjectCounter({ total }) {
 
       const resizeObserver = new ResizeObserver(scheduleMobileUpdate);
       resizeObserver.observe(grid);
+      if (siteNav) {
+        resizeObserver.observe(siteNav);
+      }
       projectCards.forEach((projectCard) =>
         resizeObserver.observe(projectCard),
       );
 
+      document.fonts?.ready.then(() => {
+        if (!disposed) {
+          scheduleMobileUpdate();
+        }
+      });
+
       return () => {
+        disposed = true;
         window.removeEventListener("scroll", scheduleMobileUpdate);
         window.removeEventListener("resize", scheduleMobileUpdate);
         resizeObserver.disconnect();
@@ -81,6 +125,7 @@ export default function ProjectCounter({ total }) {
 
         if (frameRef.current !== null) {
           window.cancelAnimationFrame(frameRef.current);
+          frameRef.current = null;
         }
       };
     }
@@ -142,6 +187,7 @@ export default function ProjectCounter({ total }) {
     const scheduleLayoutUpdate = () => {
       if (frameRef.current !== null) {
         window.cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
       }
 
       frameRef.current = window.requestAnimationFrame(() => {
