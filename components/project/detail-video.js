@@ -11,6 +11,7 @@ export default function ProjectDetailVideo({
 }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const videoSrc = getVideoSrc({ autoplay, poster, src });
 
   const handlePlayClick = useCallback(() => {
     const playPromise = videoRef.current?.play();
@@ -38,7 +39,7 @@ export default function ProjectDetailVideo({
         poster={poster}
         preload={autoplay ? "auto" : "metadata"}
         ref={videoRef}
-        src={src}
+        src={videoSrc}
       >
         Your browser does not support the video tag.
       </video>
@@ -64,4 +65,14 @@ export default function ProjectDetailVideo({
       ) : null}
     </div>
   );
+}
+
+function getVideoSrc({ autoplay, poster, src }) {
+  if (autoplay || poster || !src || src.includes("#")) {
+    return src;
+  }
+
+  // iOS/iPadOS Safari may leave paused videos blank without a poster.
+  // A tiny media-fragment offset makes WebKit request and paint the first frame.
+  return `${src}#t=0.001`;
 }
