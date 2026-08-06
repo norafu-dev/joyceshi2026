@@ -19,6 +19,11 @@
 
 # production
 /build
+/dist/
+/.sanity/
+
+# local Sanity exports
+/sanity-backup-*.tar.gz
 
 # misc
 .DS_Store
