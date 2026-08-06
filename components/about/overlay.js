@@ -10,7 +10,6 @@ import { portableTextComponents } from "./portable-text";
 
 export default function AboutOverlay({
   about,
-  animateMobileClosePlus = true,
   open,
   onClose,
   onExited,
@@ -156,7 +155,6 @@ export default function AboutOverlay({
       >
         <section className="about-mobile-intro">
           <MobileAboutHeader
-            animateClosePlus={animateMobileClosePlus}
             onNavigate={onClose}
             open={open}
           />
@@ -216,7 +214,7 @@ export default function AboutOverlay({
   );
 }
 
-function MobileAboutHeader({ animateClosePlus, onNavigate, open }) {
+function MobileAboutHeader({ onNavigate, open }) {
   return (
     <header className="about-mobile-header">
       <button
@@ -255,10 +253,9 @@ function MobileAboutHeader({ animateClosePlus, onNavigate, open }) {
           digital design
         </Link>
         <span>.</span>
-        <span
-          aria-hidden="true"
-          className={`nav-plus about-mobile-close-plus text-black ${!open && animateClosePlus ? "nav-plus-returning" : ""}`}
-        />
+        {!open ? (
+          <span aria-hidden="true" className="nav-plus nav-plus-returning text-black" />
+        ) : null}
       </span>
     </header>
   );

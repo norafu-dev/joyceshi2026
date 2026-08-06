@@ -742,35 +742,6 @@ body:has(.category-page) {
   font: inherit;
 }
 
-.about-mobile-close-plus::before,
-.about-mobile-close-plus::after {
-  opacity: 0;
-}
-
-.about-mobile-close-plus::after {
-  transform: translate(-50%, -50%) rotate(0deg);
-}
-
-.about-mobile-close-plus.nav-plus-returning::before {
-  animation: about-mobile-plus-appear 260ms ease-out forwards;
-}
-
-.about-mobile-close-plus.nav-plus-returning::after {
-  animation:
-    nav-plus-line-rotate-back 900ms cubic-bezier(0.4, 0, 0.2, 1) forwards,
-    about-mobile-plus-appear 260ms ease-out forwards;
-}
-
-@keyframes about-mobile-plus-appear {
-  from {
-    opacity: 0.3;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 .about-mobile-bio {
   margin-top: 12px;
 }
@@ -1282,12 +1253,6 @@ body:has(.category-page) {
   .nav-plus.nav-plus-returning::after {
     backface-visibility: hidden;
     will-change: opacity, transform;
-  }
-
-  body:has(.about-page)>nav.site-nav-dark .nav-plus.nav-plus-returning::before,
-  body:has(.about-page)>nav.site-nav-dark .nav-plus.nav-plus-returning::after {
-    animation: none;
-    opacity: 0;
   }
 
   main.project-detail-page .project-mobile-awards {
