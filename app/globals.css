@@ -1299,6 +1299,16 @@ body:has(.category-page) {
     margin-left: 0;
   }
 
+  .project-detail-page .project-page-gallery {
+    display: flex;
+    min-height: calc(100dvh - 12px - var(--site-nav-height));
+    flex-direction: column;
+  }
+
+  .project-detail-page .project-page-gallery>.site-footer {
+    margin-top: auto;
+  }
+
   .project-detail-page .project-detail-row {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
