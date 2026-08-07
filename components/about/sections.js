@@ -47,17 +47,18 @@ export function DatedSection({ title, items }) {
   );
 }
 
-export function TextSection({ title, value }) {
+export function TextSection({ children, className = "", title, value }) {
   if (!value?.length) {
     return null;
   }
 
   return (
-    <section className="about-info-section mb-16 last:mb-0">
+    <section className={`about-info-section mb-16 last:mb-0 ${className}`}>
       <h2 className="about-info-heading mb-6">{title}</h2>
       <div className="about-info-content">
         <PortableText components={listPortableTextComponents} value={value} />
       </div>
+      {children}
     </section>
   );
 }

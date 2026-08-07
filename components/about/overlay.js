@@ -181,34 +181,16 @@ export default function AboutOverlay({
           ))}
 
           <TextSection
+            className="about-mobile-final-section"
             title="Clients & Collaborators"
             value={about?.clientsCollaborators}
-          />
+          >
+            <MobileFooter
+              onBackToTop={handleBackToTop}
+              onNavigate={onClose}
+            />
+          </TextSection>
         </div>
-
-        <nav className="about-mobile-footer text-black">
-          <button
-            className="justify-self-start"
-            onClick={handleBackToTop}
-            type="button"
-          >
-            Back to top <BackToTopIcon />
-          </button>
-          <Link
-            className="justify-self-start underline"
-            href="/"
-            onClick={onClose}
-          >
-            Return
-          </Link>
-          <Link
-            className="justify-self-end underline"
-            href="/archive"
-            onClick={onClose}
-          >
-            Archive
-          </Link>
-        </nav>
       </div>
     </div>
   );
@@ -290,6 +272,34 @@ function MobileContactNav() {
       >
         CV
       </a>
+    </nav>
+  );
+}
+
+function MobileFooter({ onBackToTop, onNavigate }) {
+  return (
+    <nav className="about-mobile-footer text-black">
+      <button
+        className="justify-self-start"
+        onClick={onBackToTop}
+        type="button"
+      >
+        Back to top <BackToTopIcon />
+      </button>
+      <Link
+        className="justify-self-start underline"
+        href="/"
+        onClick={onNavigate}
+      >
+        Return
+      </Link>
+      <Link
+        className="justify-self-end underline"
+        href="/archive"
+        onClick={onNavigate}
+      >
+        Archive
+      </Link>
     </nav>
   );
 }

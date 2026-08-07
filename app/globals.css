@@ -800,7 +800,10 @@ body:has(.category-page) {
   padding-bottom: 90px;
 }
 
-.about-mobile-details .about-info-section:last-child {
+.about-mobile-details .about-mobile-final-section {
+  display: flex;
+  min-height: calc(100dvh - var(--about-mobile-contact-height));
+  flex-direction: column;
   padding-bottom: 0;
 }
 
@@ -830,10 +833,13 @@ body:has(.category-page) {
 
 .about-mobile-footer {
   display: grid;
-  min-height: 450px;
+  min-height: 44px;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   align-items: end;
   column-gap: 4px;
+  margin-top: auto;
+  margin-right: -12px;
+  margin-left: -12px;
   padding: 0 12px 12px;
 }
 
