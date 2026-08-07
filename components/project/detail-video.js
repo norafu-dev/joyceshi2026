@@ -10,6 +10,7 @@ export default function ProjectDetailVideo({
   title = "",
 }) {
   const videoRef = useRef(null);
+  const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const videoSrc = getVideoSrc({ autoplay, poster, src });
 
@@ -30,11 +31,14 @@ export default function ProjectDetailVideo({
         aria-label={title || "Project video"}
         autoPlay={autoplay}
         className="block h-full w-full object-cover"
-        controls={!autoplay && isPlaying}
+        controls={!autoplay && hasStarted}
         loop
         muted={autoplay}
         onPause={() => setIsPlaying(false)}
-        onPlay={() => setIsPlaying(true)}
+        onPlay={() => {
+          setHasStarted(true);
+          setIsPlaying(true);
+        }}
         playsInline
         poster={poster}
         preload={autoplay ? "auto" : "metadata"}

@@ -371,6 +371,14 @@ body:has(.category-page) {
   pointer-events: none;
 }
 
+.project-detail-page::before {
+  left: 0;
+  box-sizing: border-box;
+  width: calc(((100vw - 24px - (23 * 4px)) / 24 + 4px) * 17 + 3px);
+  border-right: 1px solid #000000;
+  border-left: 0;
+}
+
 .project-page-gallery {
   position: relative;
   z-index: 1;
@@ -788,7 +796,12 @@ body:has(.category-page) {
 }
 
 .about-mobile-details .about-info-section {
-  margin-bottom: 90px;
+  margin-bottom: 0;
+  padding-bottom: 90px;
+}
+
+.about-mobile-details .about-info-section:last-child {
+  padding-bottom: 0;
 }
 
 .about-mobile-details .about-info-heading {
@@ -796,10 +809,15 @@ body:has(.category-page) {
   z-index: 1;
   top: var(--about-mobile-contact-height);
   margin-right: -12px;
+  margin-bottom: 0;
   margin-left: -12px;
   padding: 12px;
   border-bottom: 1px solid var(--color-gray);
   background: #ffffff;
+}
+
+.about-mobile-details .about-info-content {
+  padding-top: 24px;
 }
 
 .about-mobile-details .about-info-year {
@@ -812,7 +830,7 @@ body:has(.category-page) {
 
 .about-mobile-footer {
   display: grid;
-  min-height: 50dvh;
+  min-height: 450px;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   align-items: end;
   column-gap: 4px;

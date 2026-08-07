@@ -25,7 +25,7 @@ export function DatedSection({ title, items }) {
     <section className="about-info-section mb-15 last:mb-0">
       <h2 className="about-info-heading mb-6">{title}</h2>
 
-      <div>
+      <div className="about-info-content">
         {items.map((item) => (
           <div
             className="about-info-row grid grid-cols-7 gap-x-1"
@@ -55,7 +55,9 @@ export function TextSection({ title, value }) {
   return (
     <section className="about-info-section mb-16 last:mb-0">
       <h2 className="about-info-heading mb-6">{title}</h2>
-      <PortableText components={listPortableTextComponents} value={value} />
+      <div className="about-info-content">
+        <PortableText components={listPortableTextComponents} value={value} />
+      </div>
     </section>
   );
 }
