@@ -43,7 +43,8 @@ body {
   letter-spacing: -0.002em;
 }
 
-body:has(>nav.site-nav-landing) {
+body:has(>nav.site-nav-landing),
+body:has(>.landing-page) {
   --site-nav-offset: var(--site-nav-height);
 }
 
@@ -120,11 +121,13 @@ body>nav span {
     opacity 220ms ease;
 }
 
-body:has(>nav.site-nav-dark) {
+body:has(>nav.site-nav-dark),
+body:has(>.landing-page) {
   background: #000000;
 }
 
-body>nav.site-nav-dark {
+body>nav.site-nav-dark,
+body:has(>.landing-page)>nav:not(.nav-about-colors) {
   color: #ffffff;
 }
 
@@ -132,7 +135,8 @@ body:has(>nav.site-nav-archive)::before {
   background: #000000;
 }
 
-body>nav.site-nav-dark .text-gray {
+body>nav.site-nav-dark .text-gray,
+body:has(>.landing-page)>nav:not(.nav-about-colors) .text-gray {
   color: #FFFFFF66;
 }
 
@@ -1267,7 +1271,9 @@ body:has(.category-page) {
 @media (max-width: 42.499rem) {
 
   body>nav.site-nav-dark:not(.nav-about-colors),
-  body>nav.site-nav-dark:not(.nav-about-colors) * {
+  body>nav.site-nav-dark:not(.nav-about-colors) *,
+  body:has(>.landing-page)>nav:not(.nav-about-colors),
+  body:has(>.landing-page)>nav:not(.nav-about-colors) * {
     transition-property: opacity !important;
   }
 
