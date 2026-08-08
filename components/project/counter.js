@@ -78,6 +78,14 @@ export default function ProjectCounter({ total }) {
           }
         });
 
+        const isAtPageBottom =
+          window.scrollY + window.innerHeight >=
+          document.documentElement.scrollHeight - 2;
+
+        if (isAtPageBottom) {
+          nextCurrent = total;
+        }
+
         setCurrent((previousCurrent) =>
           previousCurrent === nextCurrent ? previousCurrent : nextCurrent,
         );
