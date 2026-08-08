@@ -4,6 +4,8 @@ import { ABOUT_PAGE_QUERY } from "@/sanity/lib/queries";
 import localFont from "next/font/local";
 import "./globals.css";
 
+export const revalidate = 3600;
+
 const untitledSerif = localFont({
   src: [
     {
