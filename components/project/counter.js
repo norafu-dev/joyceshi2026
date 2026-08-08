@@ -2,7 +2,11 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 
+const PAGE_BOTTOM_ENTER_THRESHOLD = 2;
+const PAGE_BOTTOM_EXIT_THRESHOLD = 12;
+
 export default function ProjectCounter({ total }) {
+  const atPageBottomRef = useRef(false);
   const counterRef = useRef(null);
   const currentRowRef = useRef(-1);
   const frameRef = useRef(null);
@@ -78,9 +82,16 @@ export default function ProjectCounter({ total }) {
           }
         });
 
-        const isAtPageBottom =
-          window.scrollY + window.innerHeight >=
-          document.documentElement.scrollHeight - 2;
+        const distanceFromPageBottom = Math.max(
+          0,
+          document.documentElement.scrollHeight -
+            (window.scrollY + window.innerHeight),
+        );
+        const isAtPageBottom = atPageBottomRef.current
+          ? distanceFromPageBottom <= PAGE_BOTTOM_EXIT_THRESHOLD
+          : distanceFromPageBottom <= PAGE_BOTTOM_ENTER_THRESHOLD;
+
+        atPageBottomRef.current = isAtPageBottom;
 
         if (isAtPageBottom) {
           nextCurrent = total;
