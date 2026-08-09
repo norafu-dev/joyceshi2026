@@ -2,7 +2,7 @@ import AnimatedImage, {
   AnimatedImageSequence,
 } from "@/components/animated-image";
 import ProjectMedia from "./media";
-import { PROJECT_DETAIL_ROW_NAMES } from "@/sanity/lib/queries";
+import { LEGACY_PROJECT_DETAIL_ROW_NAMES } from "@/sanity/lib/queries";
 
 export default function ProjectDetailGallery({ project }) {
   const rows = getProjectRows(project);
@@ -75,10 +75,37 @@ function ProjectDetailImage({ item, priority, sequenceIndex, sizes, title }) {
 }
 
 function getProjectRows(project) {
-  return PROJECT_DETAIL_ROW_NAMES.map((name) => ({
+  const rows = (project?.rows || [])
+    .map((row, index) => ({
+      name: row._key || `row-${index + 1}`,
+      media: (row.items || []).map(normalizeProjectMedia).filter(hasMedia),
+    }))
+    .filter((row) => row.media.length > 0);
+
+  if (rows.length > 0) {
+    return rows;
+  }
+
+  return LEGACY_PROJECT_DETAIL_ROW_NAMES.map((name) => ({
     name,
     media: (project?.[name] || []).filter(hasMedia),
   })).filter((row) => row.media.length > 0);
+}
+
+function normalizeProjectMedia(item) {
+  if (item?._type === "projectVideo") {
+    return {
+      _key: item._key,
+      video: {
+        autoplay: item.autoplay,
+        aspectRatio: item.aspectRatio,
+        file: item.file,
+        thumbnail: item.thumbnail,
+      },
+    };
+  }
+
+  return item;
 }
 
 function hasMedia(item) {

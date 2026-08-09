@@ -1,2120 +1,359 @@
-import { defineField } from "sanity";
+import {defineArrayMember, defineField, defineType} from "sanity";
 
-const project = {
-    name: "project",
-    title: "Project",
-    type: "document",
-    fields: [
-        {
-            name: "title",
-            title: "Title",
-            type: "string",
-        },
-        {
-            name: "slug",
-            title: "Slug",
-            type: "slug",
-            options: {
-                source: "title",
-            },
-        },
-        defineField({
-            name: "passwordProtected",
-            title: "Password Protected",
-            type: "boolean",
-            initialValue: false,
-        }),
-        {
-            name: "landingPage",
-            title: "LandingPage",
-            type: "boolean",
-        },
-        {
-            name: "landingPageOrder",
-            title: "Landing Page Order",
-            type: "number",
-        },
-        defineField({
-            name: "landingPageCover",
-            title: "Landing Page Cover",
-            type: "object",
-            fields: [
-                defineField({
-                    name: "desktop",
-                    title: "Desktop",
-                    type: "image",
-                    options: {
-                        hotspot: true,
-                    },
-                }),
-                defineField({
-                    name: "mobile",
-                    title: "Mobile / Tablet",
-                    type: "image",
-                    options: {
-                        hotspot: true,
-                    },
-                }),
-            ],
-        }),
-        {
-            name: "category",
-            title: "Category",
-            type: "string",
-            options: {
-                list: [
-                    { title: "brand & campaign system", value: "brand-campaign-system" },
-                    { title: "print & editorial design", value: "print-editorial-design" },
-                    { title: "digital design", value: "digital-design" },
-                ],
-                layout: "radio",
-            },
-        },
-        {
-            name: "categoryPageOrder",
-            title: "Category Page Order",
-            type: "number",
-        },
+const aspectRatioField = () =>
+  defineField({
+    name: "aspectRatio",
+    title: "Aspect Ratio",
+    type: "string",
+    description: "Controls the displayed height while the media width stays fixed.",
+    options: {
+      list: [
+        {title: "16:9", value: "16:9"},
+        {title: "4:3", value: "4:3"},
+        {title: "1:1", value: "1:1"},
+      ],
+      layout: "radio",
+    },
+    initialValue: "16:9",
+  });
 
-        {
-            name: "categoryPageCover",
-            title: "Category Page Cover",
-            type: "object",
-            fields: [
-                {
-                    name: "image",
-                    title: "Image",
-                    type: "image",
-                    options: {
-                        hotspot: true,
-                    },
-                },
-                {
-                    name: "video",
-                    title: "Video",
-                    type: "object",
-                    fields: [
-                        {
-                            name: "file",
-                            title: "File",
-                            type: "file",
-                            options: {
-                                accept: ["video/*"],
-                            },
-                        },
-                        {
-                            name: "thumbnail",
-                            title: "Thumbnail",
-                            type: "image",
-                            options: {
-                                hotspot: true,
-                            },
-                        },
-                        {
-                            name: "aspectRatio",
-                            title: "Aspect Ratio",
-                            type: "string",
-                            description: "Controls the displayed height while the cover width stays fixed.",
-                            options: {
-                                list: [
-                                    { title: "16:9", value: "16:9" },
-                                    { title: "4:3", value: "4:3" },
-                                    { title: "1:1", value: "1:1" },
-                                ],
-                                layout: "radio",
-                            },
-                            initialValue: "16:9",
-                        },
-                    ],
-                },
-            ],
+const projectImage = defineArrayMember({
+  name: "projectImage",
+  title: "Image",
+  type: "object",
+  fields: [
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      options: {
+        hotspot: true,
+      },
+      validation: (rule) => rule.required(),
+    }),
+  ],
+  preview: {
+    select: {
+      image: "image",
+    },
+    prepare({image}) {
+      return {
+        title: "Image",
+        media: image,
+      };
+    },
+  },
+});
+
+const projectVideo = defineArrayMember({
+  name: "projectVideo",
+  title: "Video",
+  type: "object",
+  fields: [
+    defineField({
+      name: "file",
+      title: "File",
+      type: "file",
+      options: {
+        accept: ["video/*"],
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "thumbnail",
+      title: "Thumbnail",
+      type: "image",
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
+      name: "autoplay",
+      title: "Autoplay",
+      type: "boolean",
+      initialValue: false,
+    }),
+    aspectRatioField(),
+  ],
+  preview: {
+    select: {
+      filename: "file.asset.originalFilename",
+      thumbnail: "thumbnail",
+    },
+    prepare({filename, thumbnail}) {
+      return {
+        title: "Video",
+        subtitle: filename,
+        media: thumbnail,
+      };
+    },
+  },
+});
+
+const projectRow = defineArrayMember({
+  name: "projectRow",
+  title: "Media Row",
+  type: "object",
+  fields: [
+    defineField({
+      name: "items",
+      title: "Media",
+      type: "array",
+      of: [projectImage, projectVideo],
+      options: {
+        sortable: true,
+      },
+      validation: (rule) =>
+        rule.required().min(1).max(2).error("A row must contain one or two media items."),
+    }),
+  ],
+  preview: {
+    select: {
+      firstImage: "items.0.image",
+      firstThumbnail: "items.0.thumbnail",
+      firstType: "items.0._type",
+      secondType: "items.1._type",
+    },
+    prepare({firstImage, firstThumbnail, firstType, secondType}) {
+      const types = [firstType, secondType].filter(Boolean).map(formatMediaType);
+
+      return {
+        title: "Media row",
+        subtitle: types.join(" + ") || "Empty row",
+        media: firstImage || firstThumbnail,
+      };
+    },
+  },
+});
+
+const project = defineType({
+  name: "project",
+  title: "Project",
+  type: "document",
+  groups: [
+    {name: "details", title: "Details", default: true},
+    {name: "listing", title: "Listing & Covers"},
+    {name: "content", title: "Project Media"},
+  ],
+  fields: [
+    defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+      group: "details",
+    }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      group: "details",
+      options: {
+        source: "title",
+      },
+    }),
+    defineField({
+      name: "passwordProtected",
+      title: "Password Protected",
+      type: "boolean",
+      group: "details",
+      initialValue: false,
+    }),
+    defineField({
+      name: "year",
+      title: "Year",
+      type: "string",
+      group: "details",
+    }),
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+      group: "details",
+    }),
+    defineField({
+      name: "awards",
+      title: "Awards",
+      type: "array",
+      group: "details",
+      of: [
+        defineArrayMember({
+          title: "Award",
+          type: "object",
+          fields: [
+            defineField({name: "year", title: "Year", type: "number"}),
+            defineField({name: "award", title: "Award", type: "string"}),
+          ],
+          preview: {
+            select: {
+              title: "award",
+              year: "year",
+            },
+            prepare({title, year}) {
+              return {
+                title: title || "Award",
+                subtitle: year ? String(year) : undefined,
+              };
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "buy",
+      title: "Buy",
+      type: "url",
+      group: "details",
+    }),
+    defineField({
+      name: "landingPage",
+      title: "Landing Page",
+      type: "boolean",
+      group: "listing",
+    }),
+    defineField({
+      name: "landingPageOrder",
+      title: "Landing Page Order",
+      type: "number",
+      group: "listing",
+    }),
+    defineField({
+      name: "landingPageCover",
+      title: "Landing Page Cover",
+      type: "object",
+      group: "listing",
+      options: {
+        collapsible: true,
+        collapsed: false,
+      },
+      fields: [
+        defineField({
+          name: "desktop",
+          title: "Desktop",
+          type: "image",
+          options: {
+            hotspot: true,
+          },
+        }),
+        defineField({
+          name: "mobile",
+          title: "Mobile / Tablet",
+          type: "image",
+          options: {
+            hotspot: true,
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "category",
+      title: "Category",
+      type: "string",
+      group: "listing",
+      options: {
+        list: [
+          {title: "brand & campaign system", value: "brand-campaign-system"},
+          {title: "print & editorial design", value: "print-editorial-design"},
+          {title: "digital design", value: "digital-design"},
+        ],
+        layout: "radio",
+      },
+    }),
+    defineField({
+      name: "categoryPageOrder",
+      title: "Category Page Order",
+      type: "number",
+      group: "listing",
+    }),
+    defineField({
+      name: "categoryPageCover",
+      title: "Category Page Cover",
+      type: "object",
+      group: "listing",
+      options: {
+        collapsible: true,
+        collapsed: false,
+      },
+      fields: [
+        defineField({
+          name: "image",
+          title: "Image",
+          type: "image",
+          options: {
+            hotspot: true,
+          },
+        }),
+        defineField({
+          name: "video",
+          title: "Video",
+          type: "object",
+          options: {
+            collapsible: true,
+            collapsed: true,
+          },
+          fields: [
+            defineField({
+              name: "file",
+              title: "File",
+              type: "file",
+              options: {
+                accept: ["video/*"],
+              },
+            }),
+            defineField({
+              name: "thumbnail",
+              title: "Thumbnail",
+              type: "image",
+              options: {
+                hotspot: true,
+              },
+            }),
+            aspectRatioField(),
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: "rows",
+      title: "Project Media",
+      description: "Add rows in display order. Each row can contain one or two images or videos.",
+      type: "array",
+      group: "content",
+      of: [projectRow],
+      options: {
+        sortable: true,
+        modal: {
+          type: "dialog",
+          width: 2,
         },
-        {
-            name: "year",
-            title: "Year",
-            type: "string",
-        },
-        {
-            name: "description",
-            title: "Description",
-            type: "text",
-        },
-        {
-            name: "awards",
-            title: "Awards",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        { name: "year", title: "Year", type: "number" },
-                        { name: "award", title: "Award", type: "string" },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "buy",
-            title: "Buy",
-            type: "url",
-        },
-        // 内容行数
-        {
-            name: "row1",
-            title: "Row 1",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row2",
-            title: "Row 2",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row3",
-            title: "Row 3",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row4",
-            title: "Row 4",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row5",
-            title: "Row 5",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row6",
-            title: "Row 6",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row7",
-            title: "Row 7",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row8",
-            title: "Row 8",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row9",
-            title: "Row 9",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row10",
-            title: "Row 10",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row11",
-            title: "Row 11",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row12",
-            title: "Row 12",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row13",
-            title: "Row 13",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row14",
-            title: "Row 14",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row15",
-            title: "Row 15",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row16",
-            title: "Row 16",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row17",
-            title: "Row 17",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row18",
-            title: "Row 18",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row19",
-            title: "Row 19",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row20",
-            title: "Row 20",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row21",
-            title: "Row 21",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row22",
-            title: "Row 22",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row23",
-            title: "Row 23",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row24",
-            title: "Row 24",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row25",
-            title: "Row 25",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row26",
-            title: "Row 26",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row27",
-            title: "Row 27",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row28",
-            title: "Row 28",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row29",
-            title: "Row 29",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row30",
-            title: "Row 30",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row31",
-            title: "Row 31",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row32",
-            title: "Row 32",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row33",
-            title: "Row 33",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row34",
-            title: "Row 34",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "row35",
-            title: "Row 35",
-            type: "array",
-            of: [
-                {
-                    type: "object",
-                    fields: [
-                        {
-                            name: "image",
-                            title: "Image",
-                            type: "image",
-                        },
-                        {
-                            name: "video",
-                            title: "Video",
-                            type: "object",
-                            fields: [
-                                {
-                                    name: "file",
-                                    title: "File",
-                                    type: "file",
-                                    options: {
-                                        accept: ["video/*"],
-                                    },
-                                },
-                                {
-                                    name: "thumbnail",
-                                    title: "Thumbnail",
-                                    type: "image",
-                                },
-                                {
-                                    name: "autoplay",
-                                    title: "Autoplay",
-                                    type: "boolean",
-                                },
-                                {
-                                    name: "aspectRatio",
-                                    title: "Aspect Ratio",
-                                    type: "string",
-                                    options: {
-                                        list: [
-                                            { title: "16:9", value: "16:9" },
-                                            { title: "4:3", value: "4:3" },
-                                            { title: "1:1", value: "1:1" },
-                                        ],
-                                        layout: "radio",
-                                    },
-                                    initialValue: "16:9",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-    ],
-};
+      },
+    }),
+  ],
+  preview: {
+    select: {
+      title: "title",
+      category: "category",
+      media: "landingPageCover.desktop",
+    },
+    prepare({title, category, media}) {
+      return {
+        title: title || "Untitled project",
+        subtitle: category,
+        media,
+      };
+    },
+  },
+});
+
+function formatMediaType(type) {
+  if (type === "projectVideo") {
+    return "Video";
+  }
+
+  if (type === "projectImage") {
+    return "Image";
+  }
+
+  return "Media";
+}
 
 export default project;

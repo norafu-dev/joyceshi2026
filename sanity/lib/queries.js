@@ -1,6 +1,6 @@
 import { defineQuery } from "next-sanity";
 
-export const PROJECT_DETAIL_ROW_NAMES = Array.from(
+export const LEGACY_PROJECT_DETAIL_ROW_NAMES = Array.from(
   { length: 35 },
   (_, index) => `row${index + 1}`,
 );
@@ -45,9 +45,53 @@ const projectDetailMediaProjection = /* groq */ `
   }
 `;
 
-const projectDetailRowsProjection = PROJECT_DETAIL_ROW_NAMES.map(
+const legacyProjectDetailRowsProjection = LEGACY_PROJECT_DETAIL_ROW_NAMES.map(
   (rowName) => `${rowName}[]{${projectDetailMediaProjection}}`,
 ).join(",\n");
+
+const projectRowsProjection = /* groq */ `
+  rows[] {
+    _key,
+    items[] {
+      _key,
+      _type,
+      image {
+        alt,
+        crop,
+        hotspot,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions,
+            lqip
+          }
+        }
+      },
+      autoplay,
+      aspectRatio,
+      file {
+        asset->{
+          _id,
+          url,
+          mimeType
+        }
+      },
+      thumbnail {
+        crop,
+        hotspot,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions,
+            lqip
+          }
+        }
+      }
+    }
+  }
+`;
 
 export const ABOUT_PAGE_QUERY = defineQuery(`
   *[_type == "about"][0] {
@@ -178,7 +222,8 @@ export const PROJECT_BY_CATEGORY_AND_SLUG_QUERY = defineQuery(`
       award
     },
     buy,
-    ${projectDetailRowsProjection}
+    ${projectRowsProjection},
+    ${legacyProjectDetailRowsProjection}
   }
 `);
 
