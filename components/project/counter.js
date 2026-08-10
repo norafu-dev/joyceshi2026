@@ -4,6 +4,8 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 const PAGE_BOTTOM_ENTER_THRESHOLD = 2;
 const PAGE_BOTTOM_EXIT_THRESHOLD = 12;
+const DESKTOP_MEDIA_QUERY = "(min-width: 62.5rem)";
+const VIEWPORT_MODE_DEBOUNCE_MS = 120;
 
 export default function ProjectCounter({ total }) {
   const atPageBottomRef = useRef(false);
@@ -11,8 +13,42 @@ export default function ProjectCounter({ total }) {
   const currentRowRef = useRef(-1);
   const frameRef = useRef(null);
   const [current, setCurrent] = useState(1);
+  const [isDesktopViewport, setIsDesktopViewport] = useState(null);
 
   useLayoutEffect(() => {
+    const desktopMedia = window.matchMedia(DESKTOP_MEDIA_QUERY);
+    let resizeTimer = null;
+
+    const syncViewportMode = () => {
+      setIsDesktopViewport((previousMode) =>
+        previousMode === desktopMedia.matches
+          ? previousMode
+          : desktopMedia.matches,
+      );
+    };
+
+    const handleViewportChange = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(
+        syncViewportMode,
+        VIEWPORT_MODE_DEBOUNCE_MS,
+      );
+    };
+
+    syncViewportMode();
+    desktopMedia.addEventListener("change", handleViewportChange);
+
+    return () => {
+      window.clearTimeout(resizeTimer);
+      desktopMedia.removeEventListener("change", handleViewportChange);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (isDesktopViewport === null) {
+      return undefined;
+    }
+
     const counter = counterRef.current;
     const grid = counter?.closest(".category-project-grid");
 
@@ -20,7 +56,7 @@ export default function ProjectCounter({ total }) {
       return undefined;
     }
 
-    if (window.matchMedia("(max-width: 999px)").matches) {
+    if (!isDesktopViewport) {
       const phoneMedia = window.matchMedia("(max-width: 42.499rem)");
       const siteNav = document.querySelector("body > nav");
       const projectCards = Array.from(
@@ -227,12 +263,16 @@ export default function ProjectCounter({ total }) {
       window.removeEventListener("scroll", scheduleCurrentUpdate);
       window.removeEventListener("resize", scheduleLayoutUpdate);
       resizeObserver.disconnect();
+      counter.style.removeProperty("position");
+      counter.style.removeProperty("top");
+      counter.style.removeProperty("visibility");
 
       if (frameRef.current !== null) {
         window.cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
       }
     };
-  }, [total]);
+  }, [isDesktopViewport, total]);
 
   return (
     <div

@@ -127,12 +127,8 @@ function PasswordProjectActions({ buyHref, nextHref, nextTitle }) {
         >
           Buy
         </a>
-      ) : (
-        <span aria-disabled="true" className="text-purple underline">
-          Buy
-        </span>
-      )}
-      {nextHref ? <span aria-hidden="true"> / </span> : null}
+      ) : null}
+      {buyHref && nextHref ? <span aria-hidden="true"> / </span> : null}
       {nextHref ? (
         <Link
           aria-label={`Next project: ${nextTitle || "View project"}`}

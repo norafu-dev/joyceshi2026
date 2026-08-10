@@ -13,6 +13,7 @@ export default function AboutOverlay({
   open,
   onClose,
   onExited,
+  showMobileReturningPlus,
 }) {
   const overlayRef = useRef(null);
   const lineRef = useRef(null);
@@ -157,6 +158,7 @@ export default function AboutOverlay({
           <MobileAboutHeader
             onNavigate={onClose}
             open={open}
+            showReturningPlus={showMobileReturningPlus}
           />
 
           <div className="about-mobile-bio">
@@ -196,7 +198,7 @@ export default function AboutOverlay({
   );
 }
 
-function MobileAboutHeader({ onNavigate, open }) {
+function MobileAboutHeader({ onNavigate, open, showReturningPlus }) {
   return (
     <header className="about-mobile-header">
       <button
@@ -235,7 +237,7 @@ function MobileAboutHeader({ onNavigate, open }) {
           digital design
         </Link>
         <span>.</span>
-        {!open ? (
+        {!open && showReturningPlus ? (
           <span aria-hidden="true" className="nav-plus nav-plus-returning text-black" />
         ) : null}
       </span>

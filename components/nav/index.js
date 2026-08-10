@@ -260,6 +260,7 @@ const Nav = ({ about }) => {
                     onClose={handleCloseAbout}
                     onExited={handleAboutExited}
                     open={aboutOpen}
+                    showMobileReturningPlus={!isProjectRoute}
                 />
             ) : null}
         </>
