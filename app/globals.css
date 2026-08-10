@@ -148,6 +148,12 @@ body>nav.nav-about-colors .text-gray {
   color: var(--color-gray);
 }
 
+@media (min-width: 42.5rem) {
+  body>nav.nav-about-colors .nav-category-link {
+    color: #000000;
+  }
+}
+
 .nav-plus {
   display: inline-block;
   width: 15px;

@@ -270,7 +270,7 @@ function CategoryLink({ active, children, href, muted, onNavigate }) {
     return (
         <Link
             href={href}
-            className={`underline ${active ? "text-purple" : muted ? "text-gray" : ""}`}
+            className={`nav-category-link underline ${active ? "text-purple" : muted ? "text-gray" : ""}`}
             onClick={onNavigate}
         >
             {children}
